@@ -10,11 +10,21 @@ class Main {
         this.light = new BABYLON.HemisphericLight("Light", BABYLON.Vector3.Up(), this.scene);
         this.light.diffuse.copyFromFloats(1, 1, 1);
         this.light.groundColor.copyFromFloats(0.4, 0.4, 0.4);
-        this.camera = new BABYLON.ArcRotateCamera("MenuCamera", 0, 0, 1, BABYLON.Vector3.Zero(), this.scene);
+        this.camera = new BABYLON.ArcRotateCamera("MenuCamera", 0, 0, 1, new BABYLON.Vector3(0, 1.2, 0), this.scene);
         this.camera.attachControl(this.canvas);
-        this.camera.setPosition(new BABYLON.Vector3(2, 1, 2));
+        this.camera.setPosition(new BABYLON.Vector3(1, 1.8, -2));
         this.camera.wheelPrecision *= 50;
         this.camera.minZ = 0.05;
+        let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
+        skybox.rotation.y = Math.PI / 2;
+        skybox.infiniteDistance = true;
+        let skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./datas/skyboxes/green-nebulae", this.scene, ["-px.png", "-py.png", "-pz.png", "-nx.png", "-ny.png", "-nz.png"]);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+        skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        skybox.material = skyboxMaterial;
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -46,8 +56,8 @@ window.addEventListener("DOMContentLoaded", () => {
                 });
             }
             if (m.name === "Grid") {
-                let gridMaterial = new BABYLON.StandardMaterial("Grid", this.scene);
-                gridMaterial.diffuseTexture = new BABYLON.Texture("./datas/grid.png", this.scene);
+                let gridMaterial = new BABYLON.StandardMaterial("Grid", game.scene);
+                gridMaterial.diffuseTexture = new BABYLON.Texture("./datas/grid.png", game.scene);
                 gridMaterial.opacityTexture = gridMaterial.diffuseTexture;
                 m.material = gridMaterial;
                 let k = 0;
@@ -57,10 +67,41 @@ window.addEventListener("DOMContentLoaded", () => {
                 });
             }
             if (m.material instanceof BABYLON.StandardMaterial) {
-                if (m.material.ambientTexture) {
-                    m.material.lightmapTexture = m.material.ambientTexture;
+                if (m.material.name.endsWith("LightBox")) {
+                    m.material.lightmapTexture = new BABYLON.Texture("./datas/textures/LightBox-ao.png", game.scene);
                     m.material.useLightmapAsShadowmap;
                 }
+                if (m.material.name.endsWith("MachineBox")) {
+                    m.material.lightmapTexture = new BABYLON.Texture("./datas/textures/MachineBox-ao.png", game.scene);
+                    m.material.useLightmapAsShadowmap;
+                }
+                if (m.material.name.endsWith("MachineFrame")) {
+                    m.material.diffuseTexture = new BABYLON.Texture("./datas/textures/metal.jpg", game.scene);
+                    m.material.diffuseTexture.uScale = 5;
+                    m.material.diffuseTexture.vScale = 5;
+                    m.material.diffuseColor.copyFromFloats(0.5, 0.5, 0.5);
+                    m.material.specularColor.copyFromFloats(0.5, 0.5, 0.5);
+                    m.material.bumpTexture = new BABYLON.Texture("./datas/textures/MachineFrame-bump.png", game.scene);
+                }
+            }
+            else if (m.material instanceof BABYLON.MultiMaterial) {
+                m.material.subMaterials.forEach((sm) => {
+                    if (sm.name.endsWith("WallFrame")) {
+                        if (sm instanceof BABYLON.StandardMaterial) {
+                            sm.diffuseTexture = new BABYLON.Texture("./datas/textures/metal.jpg", game.scene);
+                            sm.diffuseTexture.uScale = 5;
+                            sm.diffuseTexture.vScale = 5;
+                            sm.diffuseColor.copyFromFloats(0.25, 0.25, 0.25);
+                            sm.specularColor.copyFromFloats(0.5, 0.5, 0.5);
+                        }
+                    }
+                    if (sm.name.endsWith("WallBox")) {
+                        if (sm instanceof BABYLON.StandardMaterial) {
+                            sm.diffuseColor.copyFromFloats(0.25, 0.25, 0.25);
+                            sm.specularColor.copyFromFloats(0.5, 0.5, 0.5);
+                        }
+                    }
+                });
             }
         });
     });

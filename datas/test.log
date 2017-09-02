@@ -3,41 +3,55 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 	Scene settings used:
 		selected layers only:  true
 		flat shading entire scene:  false
-		inline textures:  true
+		inline textures:  false
+		texture directory:  C:\Users\Sven\Documents\SvenFrankson\HoloBomb\datas\
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
-	processing begun of mesh:  Babylon.003
+	processing begun of mesh:  Back
+		processing begun of Standard material:  WallFrame
+		processing begun of Standard material:  WallBox
+		processing begun of multimaterial:  test.Multimaterial#0
+		num positions      :  851
+		num normals        :  851
+		num uvs            :  1702
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1992
+	processing begun of mesh:  Ceiling
 		WARNING: No materials have been assigned: 
-		num positions      :  244
-		num normals        :  244
+		num positions      :  4
+		num normals        :  4
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  1056
-	processing begun of mesh:  Babylon.002
+		num indices        :  6
+	processing begun of mesh:  Wall
+		registered as also a user of material:  WallFrame
+		registered as also a user of material:  WallBox
+		processing begun of Standard material:  Glass
+		processing begun of multimaterial:  test.Multimaterial#1
+		num positions      :  300
+		num normals        :  300
+		num uvs            :  600
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  540
+	processing begun of mesh:  Floor
 		WARNING: No materials have been assigned: 
-		num positions      :  244
-		num normals        :  244
+		num positions      :  4
+		num normals        :  4
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  1056
-	processing begun of mesh:  Babylon.001
-		WARNING: No materials have been assigned: 
-		num positions      :  244
-		num normals        :  244
-		num uvs            :  0
+		num indices        :  6
+	processing begun of mesh:  MachineFrame
+		processing begun of Standard material:  MachineFrame
+		num positions      :  3126
+		num normals        :  3126
+		num uvs            :  6252
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  1056
-	processing begun of mesh:  Babylon
-		WARNING: No materials have been assigned: 
-		num positions      :  244
-		num normals        :  244
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  1056
+		num indices        :  4992
 	processing begun of mesh:  Grid
 		processing begun of Standard material:  Material
 		num positions      :  4
@@ -46,27 +60,19 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  6
-	processing begun of mesh:  HoloMachineDark
-		processing begun of Standard material:  HoloMachineDark
-		num positions      :  3835
-		num normals        :  3835
-		num uvs            :  7670
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  18360
 	processing begun of mesh:  Light
-		WARNING: No materials have been assigned: 
-		num positions      :  386
-		num normals        :  386
+		processing begun of Standard material:  Light
+		num positions      :  98
+		num normals        :  98
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  2112
+		num indices        :  480
 	processing begun of mesh:  LightBox
-		WARNING: No materials have been assigned: 
-		num positions      :  1318
-		num normals        :  1318
-		num uvs            :  2636
+		processing begun of Standard material:  LightBox
+		num positions      :  1343
+		num normals        :  1343
+		num uvs            :  2686
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  3264
@@ -78,10 +84,8 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  516
-	processing begun of mesh:  HoloMachineBody
-		processing begun of Standard material:  HoloMachineBody
-			Ambient texture found "MachineBodyAO"
-				Image texture found, type:  ambientTexture, mapped using: "UVMap"
+	processing begun of mesh:  MachineBox
+		processing begun of Standard material:  MachineBox
 		num positions      :  2219
 		num normals        :  2219
 		num uvs            :  4438
@@ -99,4 +103,4 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 2.4276 secs
+elapsed time:  0 min, 1.6518 secs
