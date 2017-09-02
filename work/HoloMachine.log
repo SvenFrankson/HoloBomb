@@ -1,0 +1,79 @@
+Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
+========= Conversion from Blender to Babylon.js =========
+	Scene settings used:
+		selected layers only:  true
+		flat shading entire scene:  false
+		inline textures:  true
+	Python World class constructor completed
+	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of mesh:  HoloMachineDark
+		WARNING: No materials have been assigned: 
+		num positions      :  2762
+		num normals        :  2762
+		num uvs            :  5524
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  12696
+		WARNING: # of 0 area faces found:  40
+	processing begun of mesh:  Light
+		WARNING: No materials have been assigned: 
+		num positions      :  386
+		num normals        :  386
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2112
+	processing begun of mesh:  LightBox
+		WARNING: No materials have been assigned: 
+		num positions      :  1318
+		num normals        :  1318
+		num uvs            :  2636
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  3264
+	processing begun of mesh:  HoloMachineControlScreen
+		WARNING: No materials have been assigned: 
+		num positions      :  112
+		num normals        :  112
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  312
+	processing begun of mesh:  HoloMachineControl
+		WARNING: No materials have been assigned: 
+		num positions      :  1088
+		num normals        :  1088
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  5664
+	processing begun of mesh:  Surface
+		WARNING: No materials have been assigned: 
+		num positions      :  133
+		num normals        :  133
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  540
+	processing begun of mesh:  HoloMachineBody
+		processing begun of Standard material:  HoloMachineBody
+			Ambient texture found "MachineBodyAO"
+				Image texture found, type:  ambientTexture, mapped using: "UVMap"
+		num positions      :  4338
+		num normals        :  4338
+		num uvs            :  8676
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  10404
+	processing begun of mesh:  Hologram
+		processing begun of Standard material:  Hologram
+		num positions      :  3960
+		num normals        :  3960
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  3960
+========= Writing of scene file started =========
+========= Writing of scene file completed =========
+========= end of processing =========
+elapsed time:  0 min, 2.2795 secs

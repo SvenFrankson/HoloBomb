@@ -1,29 +1,102 @@
 Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 ========= Conversion from Blender to Babylon.js =========
 	Scene settings used:
-		selected layers only:  false
+		selected layers only:  true
 		flat shading entire scene:  false
-		inline textures:  false
-		texture directory:  C:\Users\Sven\Documents\SvenFrankson\HoloBomb\datas\
+		inline textures:  true
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
-	processing begun of mesh:  Circle
-		processing begun of Standard material:  Table
-		num positions      :  258
-		num normals        :  258
+	processing begun of mesh:  Babylon.003
+		WARNING: No materials have been assigned: 
+		num positions      :  244
+		num normals        :  244
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  1344
+		num indices        :  1056
+	processing begun of mesh:  Babylon.002
+		WARNING: No materials have been assigned: 
+		num positions      :  244
+		num normals        :  244
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1056
+	processing begun of mesh:  Babylon.001
+		WARNING: No materials have been assigned: 
+		num positions      :  244
+		num normals        :  244
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1056
+	processing begun of mesh:  Babylon
+		WARNING: No materials have been assigned: 
+		num positions      :  244
+		num normals        :  244
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  1056
+	processing begun of mesh:  Grid
+		processing begun of Standard material:  Material
+		num positions      :  4
+		num normals        :  4
+		num uvs            :  8
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  6
+	processing begun of mesh:  HoloMachineDark
+		processing begun of Standard material:  HoloMachineDark
+		num positions      :  3835
+		num normals        :  3835
+		num uvs            :  7670
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  18360
+	processing begun of mesh:  Light
+		WARNING: No materials have been assigned: 
+		num positions      :  386
+		num normals        :  386
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  2112
+	processing begun of mesh:  LightBox
+		WARNING: No materials have been assigned: 
+		num positions      :  1318
+		num normals        :  1318
+		num uvs            :  2636
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  3264
+	processing begun of mesh:  HoloMachineScreen
+		processing begun of Standard material:  Screen
+		num positions      :  181
+		num normals        :  181
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  516
+	processing begun of mesh:  HoloMachineBody
+		processing begun of Standard material:  HoloMachineBody
+			Ambient texture found "MachineBodyAO"
+				Image texture found, type:  ambientTexture, mapped using: "UVMap"
+		num positions      :  2219
+		num normals        :  2219
+		num uvs            :  4438
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  10404
 	processing begun of mesh:  Hologram
 		processing begun of Standard material:  Hologram
-		num positions      :  3960
-		num normals        :  3960
+		num positions      :  1980
+		num normals        :  1980
 		num uvs            :  0
 		num uvs2           :  0
 		num colors         :  0
-		num indices        :  3960
+		num indices        :  11616
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 0.2136 secs
+elapsed time:  0 min, 2.4276 secs

@@ -74,10 +74,10 @@ class HoloMaterial extends BABYLON.ShaderMaterial {
       }
     );
     this.backFaceCulling = false;
-    this.stripeLength = 0.01;
+    this.stripeLength = 0.02;
     this.height = 0;
-    this.baseColor = BABYLON.Color3.FromHexString("#42f4c8");
-    this.borderColor = BABYLON.Color3.FromHexString("#f4cb42");
+    this.baseColor = BABYLON.Color3.FromHexString("#75ceff");
+    this.borderColor = BABYLON.Color3.FromHexString("#77ff9b");
     this.fresnelBias = 2;
     this.fresnelPower = 16;
     this.stripeTex = new BABYLON.Texture("./datas/gradient.png", scene);
@@ -86,7 +86,7 @@ class HoloMaterial extends BABYLON.ShaderMaterial {
       () => {
         this.setVector3("cameraPosition", scene.activeCamera.position);
         k++;
-        this.height = Math.cos(k);
+        this.height = Math.cos(k/1000);
       }
     )
   }
