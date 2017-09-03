@@ -25,6 +25,8 @@ class Main {
         skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         skybox.material = skyboxMaterial;
+        let menu = new MainMenu2D();
+        menu.CreateUI();
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -44,7 +46,7 @@ window.addEventListener("DOMContentLoaded", () => {
     game.animate();
     BABYLON.SceneLoader.ImportMesh("", "./datas/test.babylon", "", game.scene, (meshes) => {
         meshes.forEach((m) => {
-            if (m.name === "Hologram") {
+            if (m.name.startsWith("Hologram")) {
                 m.material = new HoloMaterial("Holo", game.scene);
             }
             if (m.name.startsWith("Babylon")) {
@@ -176,5 +178,71 @@ class HoloMaterial extends BABYLON.ShaderMaterial {
             k++;
             this.height = Math.cos(k / 1000);
         });
+    }
+}
+class MainMenu {
+    static SetHoloBombButton(button, row) {
+        button.width = 0.2;
+        button.height = "100px";
+        button.fontSize = 40;
+        button.background = "#1c1c1c";
+        button.top = (100 + row * 125) + "px";
+        button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        MainMenu.DeactivateButton(button);
+        button.pointerEnterAnimation = () => {
+            MainMenu.ActivateButton(button);
+        };
+        button.pointerOutAnimation = () => {
+            MainMenu.DeactivateButton(button);
+        };
+    }
+    static SetHoloBombSquareButton(button, row) {
+        button.width = "200px";
+        button.height = "200px";
+        button.background = "#1c1c1c";
+        button.top = (100 + row * 125) + "px";
+        button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        button.pointerEnterAnimation = undefined;
+        button.pointerOutAnimation = undefined;
+    }
+    static ActivateButton(button) {
+        button.alpha = 1;
+    }
+    static DeactivateButton(button) {
+        button.alpha = 0.75;
+    }
+}
+class MainMenu2D extends MainMenu {
+    CreateUI() {
+        let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        let title = BABYLON.GUI.Button.CreateSimpleButton("title", "Holo Bombardier");
+        title.width = 0.35;
+        title.height = 0.1;
+        title.fontSize = 64;
+        title.background = "#232323";
+        title.color = "#232323";
+        title.top = 100;
+        title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        advancedTexture.addControl(title);
+        let easyMode = BABYLON.GUI.Button.CreateSimpleButton("easy-mode", "Easy");
+        MainMenu.SetHoloBombButton(easyMode, 1);
+        advancedTexture.addControl(easyMode);
+        let normalMode = BABYLON.GUI.Button.CreateSimpleButton("normal-mode", "Normal");
+        MainMenu.SetHoloBombButton(normalMode, 2);
+        advancedTexture.addControl(normalMode);
+        let hardMode = BABYLON.GUI.Button.CreateSimpleButton("hard-mode", "Hard");
+        MainMenu.SetHoloBombButton(hardMode, 3);
+        advancedTexture.addControl(hardMode);
+        let screenMode = BABYLON.GUI.Button.CreateImageOnlyButton("screen-mode", "./datas/screen-mode.png");
+        MainMenu.SetHoloBombSquareButton(screenMode, 4);
+        screenMode.left = -125;
+        advancedTexture.addControl(screenMode);
+        let vrMode = BABYLON.GUI.Button.CreateImageOnlyButton("vr-mode", "./datas/vr-mode.png");
+        MainMenu.SetHoloBombSquareButton(vrMode, 4);
+        vrMode.left = 125;
+        advancedTexture.addControl(vrMode);
+        MainMenu.DeactivateButton(vrMode);
+    }
+    DisposeUI() {
     }
 }

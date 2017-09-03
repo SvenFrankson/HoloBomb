@@ -39,6 +39,9 @@ class Main {
     skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
+
+    let menu: MainMenu = new MainMenu2D();
+    menu.CreateUI();
   }
 
   public animate(): void {
@@ -71,7 +74,7 @@ window.addEventListener("DOMContentLoaded", () => {
     ) => {
       meshes.forEach(
         (m: BABYLON.AbstractMesh) => {
-          if (m.name === "Hologram") {
+          if (m.name.startsWith("Hologram")) {
             m.material = new HoloMaterial("Holo", game.scene);
           }
           if (m.name.startsWith("Babylon")) {

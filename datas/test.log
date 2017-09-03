@@ -7,6 +7,14 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 		texture directory:  C:\Users\Sven\Documents\SvenFrankson\HoloBomb\datas\
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
+	processing begun of mesh:  Hologram.001
+		processing begun of Standard material:  Hologram
+		num positions      :  7812
+		num normals        :  7812
+		num uvs            :  0
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  45696
 	processing begun of mesh:  Back
 		processing begun of Standard material:  WallFrame
 		processing begun of Standard material:  WallBox
@@ -92,15 +100,7 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 		num uvs2           :  0
 		num colors         :  0
 		num indices        :  10404
-	processing begun of mesh:  Hologram
-		processing begun of Standard material:  Hologram
-		num positions      :  1980
-		num normals        :  1980
-		num uvs            :  0
-		num uvs2           :  0
-		num colors         :  0
-		num indices        :  11616
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 1.6518 secs
+elapsed time:  0 min, 2.7486 secs
