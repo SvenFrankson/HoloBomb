@@ -1,5 +1,7 @@
 class City extends BABYLON.Mesh {
 
+    public x0: number = 0;
+    public xEnd: number = 0;
     public towers: Tower[] = [];
     public hologramMaterial: HoloMaterial;
 
@@ -12,7 +14,8 @@ class City extends BABYLON.Mesh {
         heights: number[]
     ): void {
         console.log("Initialize City");
-        let x0: number = - (heights.length - 1) / 2 * 0.18;
+        this.x0 = - (heights.length - 1) / 2 * 0.18;
+        this.xEnd = -this.x0;
         heights.forEach(
             (
                 h: number,
@@ -20,7 +23,7 @@ class City extends BABYLON.Mesh {
             ) => {
                 let tower: Tower = new Tower(this);
                 tower.Initialize(h);
-                tower.position.x = x0 + i * 0.18;
+                tower.position.x = this.x0 + i * 0.18;
                 this.towers[i] = tower;
             }
         );

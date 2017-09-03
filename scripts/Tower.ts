@@ -17,4 +17,13 @@ class Tower extends BABYLON.Mesh {
         this.blocks[h] = new Block(BlockType.Top, this);
         this.blocks[h].position.y = 0.15 * (h);
     }
+
+    public TakeHit(): void {
+        if (this.blocks.length > 0) {
+            this.blocks.pop().dispose();
+            if (this.blocks.length > 0) {
+                this.blocks[this.blocks.length - 1].SetType(BlockType.Ruin);
+            }
+        }
+    }
 }

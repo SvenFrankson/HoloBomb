@@ -15,8 +15,12 @@ class Block extends BABYLON.Mesh {
         this.blockType = type;
         this.tower = tower;
         this.parent = tower;
-        BlockLoader.blockData.get(type).applyToMesh(this);
+        BlockLoader.blockData.get(this.blockType).applyToMesh(this);
         this.material = this.city.hologramMaterial;
+    }
+    SetType(type) {
+        this.blockType = type;
+        BlockLoader.blockData.get(this.blockType).applyToMesh(this);
     }
 }
 class BlockLoader {
@@ -43,19 +47,87 @@ class BlockLoader {
     }
 }
 BlockLoader.blockData = new Map();
+class Bombardier extends BABYLON.Mesh {
+    constructor(city) {
+        super("Bombardier", city.getScene());
+        this._coordinates = BABYLON.Vector3.Zero();
+        this.k = 0;
+        this.Update = () => {
+            this.k += 0.01;
+            this.getChildren()[0].position.y = 0.05 * Math.cos(this.k);
+            this.rotation.x = Math.PI / 8 * Math.cos(this.k);
+            this.rotation.z = Math.PI / 32 * Math.cos(this.k);
+            this.position.x += 0.005;
+            if (this.position.x > this.city.xEnd + 0.18) {
+                this.position.y -= 0.15;
+                this.position.x = this.city.x0 - 0.18;
+            }
+            this.bomb.position.y -= 0.005;
+            if (this.bomb.position.y < 0) {
+                this.bomb.position.y = -1;
+            }
+        };
+        this.DropBomb = () => {
+            if (this.bomb.position.y < 0) {
+                console.log("Bombardier DropBomb");
+                this.bomb.position.copyFrom(this.coordinates);
+                this.bomb.position.x *= 0.18;
+                this.bomb.position.x += this.city.x0;
+                this.bomb.position.y *= 0.15;
+            }
+        };
+        this.city = city;
+        this.parent = this.city;
+        this.material = this.city.hologramMaterial;
+    }
+    get coordinates() {
+        this._coordinates.x = Math.round((this.position.x - this.city.x0) / 0.18);
+        this._coordinates.y = Math.round(this.position.y / 0.15);
+        return this._coordinates;
+    }
+    Initialize(h0, callback) {
+        BABYLON.SceneLoader.ImportMesh("", "./datas/bombardier.babylon", "", this.getScene(), (meshes) => {
+            meshes.forEach((m) => {
+                if (m instanceof BABYLON.Mesh) {
+                    if (m.name === "Bombardier") {
+                        m.parent = this;
+                        m.material = this.material;
+                    }
+                    else if (m.name === "Bomb") {
+                        m.parent = this.city;
+                        m.material = this.material;
+                        this.bomb = m;
+                        this.bomb.position.copyFromFloats(0, -1, 0);
+                    }
+                }
+            });
+            this.position.copyFromFloats(this.city.x0 - 0.18, h0 * 0.15, 0);
+            if (callback) {
+                callback();
+            }
+        });
+    }
+    Start() {
+        this.getScene().registerBeforeRender(this.Update);
+        window.addEventListener("keydown", this.DropBomb);
+    }
+}
 class City extends BABYLON.Mesh {
     constructor(scene) {
         super("City", scene);
+        this.x0 = 0;
+        this.xEnd = 0;
         this.towers = [];
         this.hologramMaterial = new HoloMaterial("CityHologram", scene);
     }
     Initialize(heights) {
         console.log("Initialize City");
-        let x0 = -(heights.length - 1) / 2 * 0.18;
+        this.x0 = -(heights.length - 1) / 2 * 0.18;
+        this.xEnd = -this.x0;
         heights.forEach((h, i) => {
             let tower = new Tower(this);
             tower.Initialize(h);
-            tower.position.x = x0 + i * 0.18;
+            tower.position.x = this.x0 + i * 0.18;
             this.towers[i] = tower;
         });
     }
@@ -88,11 +160,19 @@ class Main {
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         skybox.material = skyboxMaterial;
         let menu = new MainMenu2D();
-        menu.CreateUI();
+        //menu.CreateUI();
         BlockLoader.LoadBlockData(this.scene, () => {
             let city = new City(this.scene);
             city.position.y = 0.9;
             city.Initialize([3, 2, 4, 5, 2, 0, 1, 3]);
+            let bombardier = new Bombardier(city);
+            bombardier.Initialize(7, () => {
+                bombardier.Start();
+                setInterval(() => {
+                    let tIndex = Math.floor(Math.random() * 8);
+                    city.towers[tIndex].TakeHit();
+                }, 500);
+            });
         });
     }
     animate() {
@@ -190,6 +270,14 @@ class Tower extends BABYLON.Mesh {
         }
         this.blocks[h] = new Block(BlockType.Top, this);
         this.blocks[h].position.y = 0.15 * (h);
+    }
+    TakeHit() {
+        if (this.blocks.length > 0) {
+            this.blocks.pop().dispose();
+            if (this.blocks.length > 0) {
+                this.blocks[this.blocks.length - 1].SetType(BlockType.Ruin);
+            }
+        }
     }
 }
 class HoloMaterial extends BABYLON.ShaderMaterial {

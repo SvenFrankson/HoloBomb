@@ -21,7 +21,12 @@ class Block extends BABYLON.Mesh {
         this.blockType = type;
         this.tower = tower;
         this.parent = tower;
-        BlockLoader.blockData.get(type).applyToMesh(this);
+        BlockLoader.blockData.get(this.blockType).applyToMesh(this);
         this.material = this.city.hologramMaterial;
+    }
+
+    public SetType(type: BlockType) {
+        this.blockType = type;
+        BlockLoader.blockData.get(this.blockType).applyToMesh(this);
     }
 }
