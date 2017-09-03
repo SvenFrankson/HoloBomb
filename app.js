@@ -1,3 +1,65 @@
+var BlockType;
+(function (BlockType) {
+    BlockType[BlockType["Block"] = 0] = "Block";
+    BlockType[BlockType["Top"] = 1] = "Top";
+    BlockType[BlockType["Ruin"] = 2] = "Ruin";
+})(BlockType || (BlockType = {}));
+;
+class Block extends BABYLON.Mesh {
+    get city() {
+        return this.tower.city;
+    }
+    constructor(type, tower) {
+        super("Block-" + BlockType[type], tower.getScene());
+        console.log("Create Block " + BlockType[type]);
+        this.blockType = type;
+        this.tower = tower;
+        this.parent = tower;
+        BlockLoader.blockData.get(type).applyToMesh(this);
+        this.material = this.city.hologramMaterial;
+    }
+}
+class BlockLoader {
+    static LoadBlockData(scene, callback) {
+        BABYLON.SceneLoader.ImportMesh("", "./datas/blocks.babylon", "", scene, (meshes) => {
+            meshes.forEach((m) => {
+                if (m instanceof BABYLON.Mesh) {
+                    if (m.name === "Ruin") {
+                        BlockLoader.blockData.set(BlockType.Ruin, BABYLON.VertexData.ExtractFromMesh(m));
+                    }
+                    if (m.name === "Block") {
+                        BlockLoader.blockData.set(BlockType.Block, BABYLON.VertexData.ExtractFromMesh(m));
+                    }
+                    if (m.name === "Top") {
+                        BlockLoader.blockData.set(BlockType.Top, BABYLON.VertexData.ExtractFromMesh(m));
+                    }
+                    m.dispose();
+                }
+            });
+            if (callback) {
+                callback();
+            }
+        });
+    }
+}
+BlockLoader.blockData = new Map();
+class City extends BABYLON.Mesh {
+    constructor(scene) {
+        super("City", scene);
+        this.towers = [];
+        this.hologramMaterial = new HoloMaterial("CityHologram", scene);
+    }
+    Initialize(heights) {
+        console.log("Initialize City");
+        let x0 = -(heights.length - 1) / 2 * 0.18;
+        heights.forEach((h, i) => {
+            let tower = new Tower(this);
+            tower.Initialize(h);
+            tower.position.x = x0 + i * 0.18;
+            this.towers[i] = tower;
+        });
+    }
+}
 class Main {
     constructor(canvasElement) {
         this.canvas = document.getElementById(canvasElement);
@@ -27,6 +89,11 @@ class Main {
         skybox.material = skyboxMaterial;
         let menu = new MainMenu2D();
         menu.CreateUI();
+        BlockLoader.LoadBlockData(this.scene, () => {
+            let city = new City(this.scene);
+            city.position.y = 0.9;
+            city.Initialize([3, 2, 4, 5, 2, 0, 1, 3]);
+        });
     }
     animate() {
         this.engine.runRenderLoop(() => {
@@ -108,6 +175,23 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+class Tower extends BABYLON.Mesh {
+    constructor(city) {
+        super("Tower", city.getScene());
+        this.blocks = [];
+        this.city = city;
+        this.parent = city;
+    }
+    Initialize(h) {
+        for (let i = 0; i < h; i++) {
+            this.blocks[i] = new Block(BlockType.Block, this);
+            this.blocks[i].parent = this;
+            this.blocks[i].position.y = 0.15 * i;
+        }
+        this.blocks[h] = new Block(BlockType.Top, this);
+        this.blocks[h].position.y = 0.15 * (h);
+    }
+}
 class HoloMaterial extends BABYLON.ShaderMaterial {
     get height() {
         return this._height;

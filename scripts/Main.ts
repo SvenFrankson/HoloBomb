@@ -42,6 +42,15 @@ class Main {
 
     let menu: MainMenu = new MainMenu2D();
     menu.CreateUI();
+
+    BlockLoader.LoadBlockData(
+      this.scene,
+      () => {
+        let city: City = new City(this.scene);
+        city.position.y = 0.9;
+        city.Initialize([3, 2, 4, 5, 2, 0, 1, 3]);
+      }
+    );
   }
 
   public animate(): void {

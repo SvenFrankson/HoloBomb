@@ -1,5 +1,5 @@
 class BlockLoader {
-    public static blockData: Map<BlockType, BABYLON.VertexData>;
+    public static blockData: Map<BlockType, BABYLON.VertexData> = new Map<BlockType, BABYLON.VertexData>();
 
     public static LoadBlockData(scene: BABYLON.Scene, callback: () => void): void {
         BABYLON.SceneLoader.ImportMesh(
@@ -31,6 +31,7 @@ class BlockLoader {
                                     BABYLON.VertexData.ExtractFromMesh(m)
                                 );
                             }
+                            m.dispose();
                         }
                     }
                 );

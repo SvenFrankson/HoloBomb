@@ -6,10 +6,22 @@ enum BlockType {
 
 class Block extends BABYLON.Mesh {
 
+    public get city(): City {
+        return this.tower.city;
+    }
+    public tower: Tower;
+    public blockType: BlockType;
+    
     constructor(
         type: BlockType,
-        scene: BABYLON.Scene
+        tower: Tower
     ) {
-        super("Block-" + BlockType[type], scene);
+        super("Block-" + BlockType[type], tower.getScene());
+        console.log("Create Block " + BlockType[type]);
+        this.blockType = type;
+        this.tower = tower;
+        this.parent = tower;
+        BlockLoader.blockData.get(type).applyToMesh(this);
+        this.material = this.city.hologramMaterial;
     }
 }
