@@ -1,7 +1,8 @@
 enum BlockType {
     Block,
     Top,
-    Ruin
+    Ruin,
+    Explode
 };
 
 class Block extends BABYLON.Mesh {

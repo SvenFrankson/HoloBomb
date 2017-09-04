@@ -48,17 +48,10 @@ class Main {
       () => {
         let city: City = new City(this.scene);
         city.position.y = 0.9;
-        city.Initialize([3, 2, 4, 5, 2, 0, 1, 3]);
+        city.Initialize([3, 2, 4, 5, 2, 0, 1, 3, 5, 3]);
         let bombardier: Bombardier = new Bombardier(city);
         bombardier.Initialize(7, () => {
           bombardier.Start();
-          setInterval(
-            () => {
-              let tIndex: number = Math.floor(Math.random() * 8);
-              city.towers[tIndex].TakeHit();
-            },
-            500
-          );
         });
       }
     );

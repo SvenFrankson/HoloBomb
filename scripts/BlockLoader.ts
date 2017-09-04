@@ -31,6 +31,12 @@ class BlockLoader {
                                     BABYLON.VertexData.ExtractFromMesh(m)
                                 );
                             }
+                            if (m.name === "Explode") {
+                                BlockLoader.blockData.set(
+                                    BlockType.Explode,
+                                    BABYLON.VertexData.ExtractFromMesh(m)
+                                );
+                            }
                             m.dispose();
                         }
                     }

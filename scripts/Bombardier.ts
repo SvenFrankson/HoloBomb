@@ -4,9 +4,13 @@ class Bombardier extends BABYLON.Mesh {
     public bomb: BABYLON.Mesh;
     private _coordinates: BABYLON.Vector3 = BABYLON.Vector3.Zero();
     public get coordinates(): BABYLON.Vector3 {
-        this._coordinates.x = Math.round((this.position.x - this.city.x0) / 0.18);
-        this._coordinates.y = Math.round(this.position.y / 0.15);
+        CityCoordinates.CityPositionToCoordinatesToRef(this.position, this._coordinates);
         return this._coordinates;
+    }
+    private _bombCoordinates: BABYLON.Vector3 = BABYLON.Vector3.Zero();
+    public get bombCoordinates(): BABYLON.Vector3 {
+        CityCoordinates.CityPositionToCoordinatesToRef(this.bomb.position, this._bombCoordinates);
+        return this._bombCoordinates;
     }
 
     constructor(city: City) {
@@ -43,7 +47,7 @@ class Bombardier extends BABYLON.Mesh {
                         }
                     }
                 );
-                this.position.copyFromFloats(this.city.x0 - 0.18, h0 * 0.15, 0);
+                this.position.copyFromFloats(- 0.18, h0 * 0.15, 0);
                 if (callback) {
                     callback();
                 }
@@ -58,6 +62,7 @@ class Bombardier extends BABYLON.Mesh {
 
     private k: number = 0;
     public Update = () => {
+        // Update plane.
         this.k += 0.01;
         (this.getChildren()[0] as BABYLON.Mesh).position.y = 0.05 * Math.cos(this.k);
         this.rotation.x = Math.PI / 8 * Math.cos(this.k);
@@ -65,11 +70,22 @@ class Bombardier extends BABYLON.Mesh {
         this.position.x += 0.005;
         if (this.position.x > this.city.xEnd + 0.18) {
             this.position.y -= 0.15;
-            this.position.x = this.city.x0 - 0.18;
+            this.position.x = - 0.18;
         }
+        // Update bomb.
         this.bomb.position.y -= 0.005;
         if (this.bomb.position.y < 0) {
             this.bomb.position.y = -1;
+        }
+        let xBomb: number = this.bombCoordinates.x;
+        let tBomb: Tower = this.city.towers[xBomb];
+        if (tBomb) {
+            let yBomb: number = this._bombCoordinates.y;
+            let bBomb: Block = tBomb.blocks[yBomb];
+            if (bBomb) {
+                tBomb.TakeHit();
+                this.bomb.position.y = -1;
+            }
         }
     }
 
@@ -78,7 +94,6 @@ class Bombardier extends BABYLON.Mesh {
             console.log("Bombardier DropBomb");
             this.bomb.position.copyFrom(this.coordinates);
             this.bomb.position.x *= 0.18;
-            this.bomb.position.x += this.city.x0;
             this.bomb.position.y *= 0.15;
         }
     }
