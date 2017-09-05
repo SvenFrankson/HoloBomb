@@ -3,7 +3,10 @@ class MainMenu2D extends MainMenu {
     private _advancedTexture: BABYLON.GUI.AdvancedDynamicTexture;
 
     public CreateUI(): void {
+        Main.instance.engine.setHardwareScalingLevel(1);
+        Main.instance.resize();
         this._advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        this._advancedTexture.idealHeight = 900;
 
         let title: BABYLON.GUI.Button =  BABYLON.GUI.Button.CreateSimpleButton("title", "Holo Bombardier");
         title.width = 0.35;
@@ -18,7 +21,7 @@ class MainMenu2D extends MainMenu {
         let easyMode: BABYLON.GUI.Button = BABYLON.GUI.Button.CreateSimpleButton("easy-mode", "Easy");
         MainMenu.SetHoloBombButton(easyMode, 1);
         this._advancedTexture.addControl(easyMode);
-        easyMode.onPointerDownObservable.add(
+        easyMode.onPointerUpObservable.add(
             (p: BABYLON.Vector2) => {
                 Main.instance.StartEasyMode();
             }
@@ -27,7 +30,7 @@ class MainMenu2D extends MainMenu {
         let normalMode: BABYLON.GUI.Button = BABYLON.GUI.Button.CreateSimpleButton("normal-mode", "Normal");
         MainMenu.SetHoloBombButton(normalMode, 2);
         this._advancedTexture.addControl(normalMode);
-        normalMode.onPointerDownObservable.add(
+        normalMode.onPointerUpObservable.add(
             (p: BABYLON.Vector2) => {
                 Main.instance.StartNormalMode();
             }
@@ -36,7 +39,7 @@ class MainMenu2D extends MainMenu {
         let hardMode: BABYLON.GUI.Button = BABYLON.GUI.Button.CreateSimpleButton("hard-mode", "Hard");
         MainMenu.SetHoloBombButton(hardMode, 3);
         this._advancedTexture.addControl(hardMode);
-        hardMode.onPointerDownObservable.add(
+        hardMode.onPointerUpObservable.add(
             (p: BABYLON.Vector2) => {
                 Main.instance.StartHardMode();
             }
@@ -55,6 +58,8 @@ class MainMenu2D extends MainMenu {
     }
 
     public DisposeUI(): void {
+        Main.instance.engine.setHardwareScalingLevel(Main.instance.backupHardWareScaling);
+        Main.instance.resize();
         this._advancedTexture.dispose();
     }
 }

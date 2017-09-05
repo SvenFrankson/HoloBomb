@@ -57,8 +57,10 @@ class Bombardier extends BABYLON.Mesh {
 
     public Start() {
         this.getScene().registerBeforeRender(this.Update);
-        window.addEventListener("keydown", this.DropBomb);
-        window.addEventListener("pointerdown", this.DropBomb);
+        window.addEventListener("keydown", this.InputDown);
+        window.addEventListener("pointerdown", this.InputDown);
+        window.addEventListener("keyup", this.DropBomb);
+        window.addEventListener("pointerup", this.DropBomb);
     }
 
     private k: number = 0;
@@ -106,8 +108,6 @@ class Bombardier extends BABYLON.Mesh {
         // Update bomb.
         // Move bomb.
         this.bomb.position.y -= 0.005;
-        // For testing.
-        this.bomb.position.y -= 0.1;
         if (this.bomb.position.y < 0) {
             this.bomb.position.y = -1;
         }
@@ -135,12 +135,19 @@ class Bombardier extends BABYLON.Mesh {
         }
     }
 
+    private _downTime: number = 0;
+    public InputDown = () => {
+        this._downTime = (new Date()).getTime();
+    }
     public DropBomb = () => {
-        if (this.bomb.position.y < 0) {
-            console.log("Bombardier DropBomb");
-            this.bomb.position.copyFrom(this.coordinates);
-            this.bomb.position.x *= 0.18;
-            this.bomb.position.y *= 0.15;
+        let upTime: number = (new Date()).getTime();
+        if (upTime - this._downTime < 250) {
+            if (this.bomb.position.y < 0) {
+                console.log("Bombardier DropBomb");
+                this.bomb.position.copyFrom(this.coordinates);
+                this.bomb.position.x *= 0.18;
+                this.bomb.position.y *= 0.15;
+            }
         }
     }
 
@@ -148,5 +155,9 @@ class Bombardier extends BABYLON.Mesh {
         this.dispose();
         this.bomb.dispose();
         this.getScene().unregisterBeforeRender(this.Update);
+        window.removeEventListener("keydown", this.InputDown);
+        window.removeEventListener("pointerdown", this.InputDown);
+        window.removeEventListener("keyup", this.DropBomb);
+        window.removeEventListener("pointerup", this.DropBomb);
     }
 }

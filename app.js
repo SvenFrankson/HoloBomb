@@ -99,8 +99,6 @@ class Bombardier extends BABYLON.Mesh {
             // Update bomb.
             // Move bomb.
             this.bomb.position.y -= 0.005;
-            // For testing.
-            this.bomb.position.y -= 0.1;
             if (this.bomb.position.y < 0) {
                 this.bomb.position.y = -1;
             }
@@ -119,17 +117,24 @@ class Bombardier extends BABYLON.Mesh {
                         setTimeout(() => {
                             this.Dispose();
                             Main.instance.GoToMainMenu();
-                        }, 4000);
+                        }, 3000);
                     }
                 }
             }
         };
+        this._downTime = 0;
+        this.InputDown = () => {
+            this._downTime = (new Date()).getTime();
+        };
         this.DropBomb = () => {
-            if (this.bomb.position.y < 0) {
-                console.log("Bombardier DropBomb");
-                this.bomb.position.copyFrom(this.coordinates);
-                this.bomb.position.x *= 0.18;
-                this.bomb.position.y *= 0.15;
+            let upTime = (new Date()).getTime();
+            if (upTime - this._downTime < 250) {
+                if (this.bomb.position.y < 0) {
+                    console.log("Bombardier DropBomb");
+                    this.bomb.position.copyFrom(this.coordinates);
+                    this.bomb.position.x *= 0.18;
+                    this.bomb.position.y *= 0.15;
+                }
             }
         };
         this.city = city;
@@ -168,13 +173,19 @@ class Bombardier extends BABYLON.Mesh {
     }
     Start() {
         this.getScene().registerBeforeRender(this.Update);
-        window.addEventListener("keydown", this.DropBomb);
-        window.addEventListener("pointerdown", this.DropBomb);
+        window.addEventListener("keydown", this.InputDown);
+        window.addEventListener("pointerdown", this.InputDown);
+        window.addEventListener("keyup", this.DropBomb);
+        window.addEventListener("pointerup", this.DropBomb);
     }
     Dispose() {
         this.dispose();
         this.bomb.dispose();
         this.getScene().unregisterBeforeRender(this.Update);
+        window.removeEventListener("keydown", this.InputDown);
+        window.removeEventListener("pointerdown", this.InputDown);
+        window.removeEventListener("keyup", this.DropBomb);
+        window.removeEventListener("pointerup", this.DropBomb);
     }
 }
 class City extends BABYLON.Mesh {
@@ -257,9 +268,11 @@ class CityCoordinates {
 }
 class Main {
     constructor(canvasElement) {
+        this.backupHardWareScaling = 0;
         Main.instance = this;
         this.canvas = document.getElementById(canvasElement);
         this.engine = new BABYLON.Engine(this.canvas, true, {}, true);
+        this.backupHardWareScaling = this.engine.getHardwareScalingLevel();
         BABYLON.Engine.ShadersRepository = "./shaders/";
     }
     createScene() {
@@ -309,9 +322,9 @@ class Main {
     StartEasyMode() {
         console.log("Initialize Easy Mode");
         this.city.Dispose();
-        this.city.Initialize(City.CreateCityData(10, 0, 2));
+        this.city.Initialize(City.CreateCityData(10, 1, 3));
         this.bombardier = new Bombardier(this.city);
-        this.bombardier.Initialize(3, () => {
+        this.bombardier.Initialize(5, () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
         });
@@ -321,7 +334,7 @@ class Main {
         this.city.Dispose();
         this.city.Initialize(City.CreateCityData(10, 2, 5));
         this.bombardier = new Bombardier(this.city);
-        this.bombardier.Initialize(7, () => {
+        this.bombardier.Initialize(6, () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
         });
@@ -548,7 +561,10 @@ class MainMenu {
 }
 class MainMenu2D extends MainMenu {
     CreateUI() {
+        Main.instance.engine.setHardwareScalingLevel(1);
+        Main.instance.resize();
         this._advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        this._advancedTexture.idealHeight = 900;
         let title = BABYLON.GUI.Button.CreateSimpleButton("title", "Holo Bombardier");
         title.width = 0.35;
         title.height = 0.1;
@@ -561,19 +577,19 @@ class MainMenu2D extends MainMenu {
         let easyMode = BABYLON.GUI.Button.CreateSimpleButton("easy-mode", "Easy");
         MainMenu.SetHoloBombButton(easyMode, 1);
         this._advancedTexture.addControl(easyMode);
-        easyMode.onPointerDownObservable.add((p) => {
+        easyMode.onPointerUpObservable.add((p) => {
             Main.instance.StartEasyMode();
         });
         let normalMode = BABYLON.GUI.Button.CreateSimpleButton("normal-mode", "Normal");
         MainMenu.SetHoloBombButton(normalMode, 2);
         this._advancedTexture.addControl(normalMode);
-        normalMode.onPointerDownObservable.add((p) => {
+        normalMode.onPointerUpObservable.add((p) => {
             Main.instance.StartNormalMode();
         });
         let hardMode = BABYLON.GUI.Button.CreateSimpleButton("hard-mode", "Hard");
         MainMenu.SetHoloBombButton(hardMode, 3);
         this._advancedTexture.addControl(hardMode);
-        hardMode.onPointerDownObservable.add((p) => {
+        hardMode.onPointerUpObservable.add((p) => {
             Main.instance.StartHardMode();
         });
         let screenMode = BABYLON.GUI.Button.CreateImageOnlyButton("screen-mode", "./datas/screen-mode.png");
@@ -587,6 +603,8 @@ class MainMenu2D extends MainMenu {
         MainMenu.DeactivateButton(vrMode);
     }
     DisposeUI() {
+        Main.instance.engine.setHardwareScalingLevel(Main.instance.backupHardWareScaling);
+        Main.instance.resize();
         this._advancedTexture.dispose();
     }
 }

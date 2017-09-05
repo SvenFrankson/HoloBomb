@@ -9,11 +9,13 @@ class Main {
   public city: City;
   public bombardier: Bombardier;
   public mainMenu: MainMenu;
+  public backupHardWareScaling: number = 0;
 
   constructor(canvasElement: string) {
     Main.instance = this;
     this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
     this.engine = new BABYLON.Engine(this.canvas, true, {}, true);
+    this.backupHardWareScaling = this.engine.getHardwareScalingLevel();
     BABYLON.Engine.ShadersRepository = "./shaders/";
   }
 
@@ -79,10 +81,10 @@ class Main {
   public StartEasyMode(): void {
     console.log("Initialize Easy Mode");
     this.city.Dispose();
-    this.city.Initialize(City.CreateCityData(10, 0, 2));
+    this.city.Initialize(City.CreateCityData(10, 1, 3));
     this.bombardier = new Bombardier(this.city);
     this.bombardier.Initialize(
-        3,
+        5,
         () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
@@ -96,7 +98,7 @@ class Main {
     this.city.Initialize(City.CreateCityData(10, 2, 5));
     this.bombardier = new Bombardier(this.city);
     this.bombardier.Initialize(
-        7,
+        6,
         () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
