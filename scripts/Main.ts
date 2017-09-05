@@ -53,11 +53,11 @@ class Main {
     
     this.city = new City(this.scene);
     this.city.position.y = 0.9;
+    this.mainMenu = new MainMenu2D();
     BlockLoader.LoadBlockData(
       this.scene,
       () => {
-        this.mainMenu = new MainMenu2D();
-        this.mainMenu.CreateUI();
+        this.GoToMainMenu();
       }
     );
   }
@@ -78,10 +78,11 @@ class Main {
 
   public StartEasyMode(): void {
     console.log("Initialize Easy Mode");
-    this.city.Initialize(City.CreateCityData(7, 1, 3));
+    this.city.Dispose();
+    this.city.Initialize(City.CreateCityData(10, 0, 2));
     this.bombardier = new Bombardier(this.city);
     this.bombardier.Initialize(
-        7,
+        3,
         () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
@@ -91,7 +92,8 @@ class Main {
 
   public StartNormalMode(): void {
     console.log("Initialize Easy Mode");
-    this.city.Initialize(City.CreateCityData(7, 2, 4));
+    this.city.Dispose();
+    this.city.Initialize(City.CreateCityData(10, 2, 5));
     this.bombardier = new Bombardier(this.city);
     this.bombardier.Initialize(
         7,
@@ -104,7 +106,8 @@ class Main {
 
   public StartHardMode(): void {
     console.log("Initialize Easy Mode");
-    this.city.Initialize(City.CreateCityData(7, 3, 5));
+    this.city.Dispose();
+    this.city.Initialize(City.CreateCityData(10, 3, 7));
     this.bombardier = new Bombardier(this.city);
     this.bombardier.Initialize(
         7,
@@ -113,6 +116,10 @@ class Main {
             this.mainMenu.DisposeUI();
         }
     );
+  }
+
+  public GoToMainMenu(): void {
+      this.mainMenu.CreateUI();
   }
 }
 

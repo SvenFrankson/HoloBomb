@@ -57,17 +57,30 @@ class Bombardier extends BABYLON.Mesh {
         this._coordinates = BABYLON.Vector3.Zero();
         this._bombCoordinates = BABYLON.Vector3.Zero();
         this.k = 0;
+        this._hasWon = false;
         this.Update = () => {
             // Update plane.
             // Move plane.
             this.k += 0.01;
-            this.getChildren()[0].position.y = 0.05 * Math.cos(this.k);
-            this.rotation.x = Math.PI / 8 * Math.cos(this.k);
-            this.rotation.z = Math.PI / 32 * Math.cos(this.k);
-            this.position.x += 0.005;
-            if (this.position.x > this.city.xEnd + 0.18) {
-                this.position.y -= 0.15;
-                this.position.x = -0.18;
+            if (this._hasWon) {
+                this.position.x += 0.005;
+                this.position.y += 0.005;
+                this.rotation.x += 0.01;
+                this.rotation.z += 0.005;
+                if (this.position.x > this.city.xEnd + 0.18) {
+                    this.position.y += 0.15;
+                    this.position.x = -0.18;
+                }
+            }
+            else {
+                this.getChildren()[0].position.y = 0.05 * Math.cos(this.k);
+                this.rotation.x = Math.PI / 8 * Math.cos(this.k);
+                this.rotation.z = Math.PI / 32 * Math.cos(this.k);
+                this.position.x += 0.005;
+                if (this.position.x > this.city.xEnd + 0.18) {
+                    this.position.y -= 0.15;
+                    this.position.x = -0.18;
+                }
             }
             // Check Bombardier collision.
             let xBombardier = this.coordinates.x;
@@ -76,12 +89,18 @@ class Bombardier extends BABYLON.Mesh {
                 let yBombardier = this._coordinates.y;
                 let bBombardier = tBombardier.blocks[yBombardier];
                 if (bBombardier) {
-                    this.city.ExplodeAt(16, this._coordinates);
+                    this.city.ExplodeAt(32, this._coordinates);
+                    this.Dispose();
+                    setTimeout(() => {
+                        Main.instance.GoToMainMenu();
+                    }, 2000);
                 }
             }
             // Update bomb.
             // Move bomb.
             this.bomb.position.y -= 0.005;
+            // For testing.
+            this.bomb.position.y -= 0.1;
             if (this.bomb.position.y < 0) {
                 this.bomb.position.y = -1;
             }
@@ -94,6 +113,14 @@ class Bombardier extends BABYLON.Mesh {
                 if (bBomb) {
                     tBomb.TakeHit();
                     this.bomb.position.y = -1;
+                    // Check for victory.
+                    if (this.city.IsDestroyed()) {
+                        this._hasWon = true;
+                        setTimeout(() => {
+                            this.Dispose();
+                            Main.instance.GoToMainMenu();
+                        }, 4000);
+                    }
                 }
             }
         };
@@ -144,6 +171,11 @@ class Bombardier extends BABYLON.Mesh {
         window.addEventListener("keydown", this.DropBomb);
         window.addEventListener("pointerdown", this.DropBomb);
     }
+    Dispose() {
+        this.dispose();
+        this.bomb.dispose();
+        this.getScene().unregisterBeforeRender(this.Update);
+    }
 }
 class City extends BABYLON.Mesh {
     constructor(scene) {
@@ -168,6 +200,14 @@ class City extends BABYLON.Mesh {
         this.towers.forEach((t) => {
             t.Dispose();
         });
+    }
+    IsDestroyed() {
+        for (let i = 0; i < this.towers.length; i++) {
+            if (this.towers[i].blocks.length > 0) {
+                return false;
+            }
+        }
+        return true;
     }
     ExplodeAt(count, coordinates) {
         for (let i = 0; i < count; i++) {
@@ -250,9 +290,9 @@ class Main {
         skybox.material = skyboxMaterial;
         this.city = new City(this.scene);
         this.city.position.y = 0.9;
+        this.mainMenu = new MainMenu2D();
         BlockLoader.LoadBlockData(this.scene, () => {
-            this.mainMenu = new MainMenu2D();
-            this.mainMenu.CreateUI();
+            this.GoToMainMenu();
         });
     }
     animate() {
@@ -268,16 +308,18 @@ class Main {
     }
     StartEasyMode() {
         console.log("Initialize Easy Mode");
-        this.city.Initialize(City.CreateCityData(7, 1, 3));
+        this.city.Dispose();
+        this.city.Initialize(City.CreateCityData(10, 0, 2));
         this.bombardier = new Bombardier(this.city);
-        this.bombardier.Initialize(7, () => {
+        this.bombardier.Initialize(3, () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
         });
     }
     StartNormalMode() {
         console.log("Initialize Easy Mode");
-        this.city.Initialize(City.CreateCityData(7, 2, 4));
+        this.city.Dispose();
+        this.city.Initialize(City.CreateCityData(10, 2, 5));
         this.bombardier = new Bombardier(this.city);
         this.bombardier.Initialize(7, () => {
             this.bombardier.Start();
@@ -286,12 +328,16 @@ class Main {
     }
     StartHardMode() {
         console.log("Initialize Easy Mode");
-        this.city.Initialize(City.CreateCityData(7, 3, 5));
+        this.city.Dispose();
+        this.city.Initialize(City.CreateCityData(10, 3, 7));
         this.bombardier = new Bombardier(this.city);
         this.bombardier.Initialize(7, () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
         });
+    }
+    GoToMainMenu() {
+        this.mainMenu.CreateUI();
     }
 }
 window.addEventListener("DOMContentLoaded", () => {

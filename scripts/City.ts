@@ -40,6 +40,15 @@ class City extends BABYLON.Mesh {
         )
     }
 
+    public IsDestroyed(): boolean {
+        for (let i: number = 0; i < this.towers.length; i++) {
+            if (this.towers[i].blocks.length > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public ExplodeAt(
         count: number,
         coordinates: BABYLON.Vector3
