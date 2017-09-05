@@ -1,14 +1,19 @@
 class Main {
 
+  public static instance: Main;
   public canvas: HTMLCanvasElement;
   public engine: BABYLON.Engine;
   public scene: BABYLON.Scene;
   public light: BABYLON.HemisphericLight;
   public camera: BABYLON.ArcRotateCamera;
+  public city: City;
+  public bombardier: Bombardier;
+  public mainMenu: MainMenu;
 
   constructor(canvasElement: string) {
+    Main.instance = this;
     this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
-    this.engine = new BABYLON.Engine(this.canvas, true);
+    this.engine = new BABYLON.Engine(this.canvas, true, {}, true);
     BABYLON.Engine.ShadersRepository = "./shaders/";
   }
 
@@ -23,8 +28,13 @@ class Main {
     this.camera = new BABYLON.ArcRotateCamera("MenuCamera", 0, 0, 1, new BABYLON.Vector3(0, 1.2, 0), this.scene);
     this.camera.attachControl(this.canvas);
     this.camera.setPosition(new BABYLON.Vector3(1, 1.8, -2));
-    this.camera.wheelPrecision *= 50;
+    this.camera.wheelPrecision *= 100;
+    this.camera.pinchPrecision *= 100;
     this.camera.minZ = 0.05;
+    this.camera.lowerBetaLimit = 3 * Math.PI / 8;
+    this.camera.upperBetaLimit = 5 * Math.PI / 8;
+    this.camera.lowerRadiusLimit = 1;
+    this.camera.upperRadiusLimit = 3;
 
     let skybox: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox("skyBox", {size:100.0}, this.scene);
     skybox.rotation.y = Math.PI / 2;
@@ -40,19 +50,14 @@ class Main {
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
 
-    let menu: MainMenu = new MainMenu2D();
-    //menu.CreateUI();
-
+    
+    this.city = new City(this.scene);
+    this.city.position.y = 0.9;
     BlockLoader.LoadBlockData(
       this.scene,
       () => {
-        let city: City = new City(this.scene);
-        city.position.y = 0.9;
-        city.Initialize([3, 2, 4, 5, 2, 0, 1, 3, 5, 3]);
-        let bombardier: Bombardier = new Bombardier(city);
-        bombardier.Initialize(7, () => {
-          bombardier.Start();
-        });
+        this.mainMenu = new MainMenu2D();
+        this.mainMenu.CreateUI();
       }
     );
   }
@@ -69,6 +74,45 @@ class Main {
 
   public resize(): void {
     this.engine.resize();
+  }
+
+  public StartEasyMode(): void {
+    console.log("Initialize Easy Mode");
+    this.city.Initialize(City.CreateCityData(7, 1, 3));
+    this.bombardier = new Bombardier(this.city);
+    this.bombardier.Initialize(
+        7,
+        () => {
+            this.bombardier.Start();
+            this.mainMenu.DisposeUI();
+        }
+    );
+  }
+
+  public StartNormalMode(): void {
+    console.log("Initialize Easy Mode");
+    this.city.Initialize(City.CreateCityData(7, 2, 4));
+    this.bombardier = new Bombardier(this.city);
+    this.bombardier.Initialize(
+        7,
+        () => {
+            this.bombardier.Start();
+            this.mainMenu.DisposeUI();
+        }
+    );
+  }
+
+  public StartHardMode(): void {
+    console.log("Initialize Easy Mode");
+    this.city.Initialize(City.CreateCityData(7, 3, 5));
+    this.bombardier = new Bombardier(this.city);
+    this.bombardier.Initialize(
+        7,
+        () => {
+            this.bombardier.Start();
+            this.mainMenu.DisposeUI();
+        }
+    );
   }
 }
 

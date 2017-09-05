@@ -20,6 +20,15 @@ class Tower extends BABYLON.Mesh {
         this.blocks[h].position.y = 0.15 * (h);
     }
 
+    public Dispose(): void {
+        this.blocks.forEach(
+            (b: Block) => {
+                b.dispose();
+            }
+        );
+        this.dispose();
+    }
+
     public TakeHit(): void {
         if (this.blocks.length > 0) {
             this.blocks.pop().dispose();

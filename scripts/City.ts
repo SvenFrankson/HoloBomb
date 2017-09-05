@@ -16,6 +16,7 @@ class City extends BABYLON.Mesh {
         heights: number[]
     ): void {
         console.log("Initialize City");
+        this.towers = [];
         this.position.x = - (heights.length - 1) / 2 * City.XValue;
         this.xEnd = (heights.length - 1) * City.XValue;
         heights.forEach(
@@ -29,6 +30,14 @@ class City extends BABYLON.Mesh {
                 this.towers[i] = tower;
             }
         );
+    }
+
+    public Dispose(): void {
+        this.towers.forEach(
+            (t: Tower) => {
+                t.Dispose();
+            }
+        )
     }
 
     public ExplodeAt(
@@ -65,5 +74,15 @@ class City extends BABYLON.Mesh {
             }
             this.getScene().registerBeforeRender(update);
         }
+    }
+
+    public static CreateCityData(size: number, min: number, max: number): number[] {
+        let heights: number[] = [];
+        for (let i: number = 0; i < size; i++) {
+            heights.push(
+                Math.floor(Math.random() * (max - min) + min)
+            );
+        }
+        return heights;
     }
 }

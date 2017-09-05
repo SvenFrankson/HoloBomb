@@ -58,11 +58,13 @@ class Bombardier extends BABYLON.Mesh {
     public Start() {
         this.getScene().registerBeforeRender(this.Update);
         window.addEventListener("keydown", this.DropBomb);
+        window.addEventListener("pointerdown", this.DropBomb);
     }
 
     private k: number = 0;
     public Update = () => {
         // Update plane.
+        // Move plane.
         this.k += 0.01;
         (this.getChildren()[0] as BABYLON.Mesh).position.y = 0.05 * Math.cos(this.k);
         this.rotation.x = Math.PI / 8 * Math.cos(this.k);
@@ -72,11 +74,23 @@ class Bombardier extends BABYLON.Mesh {
             this.position.y -= 0.15;
             this.position.x = - 0.18;
         }
+        // Check Bombardier collision.
+        let xBombardier: number = this.coordinates.x;
+        let tBombardier: Tower = this.city.towers[xBombardier];
+        if (tBombardier) {
+            let yBombardier: number = this._coordinates.y;
+            let bBombardier: Block = tBombardier.blocks[yBombardier];
+            if (bBombardier) {
+                this.city.ExplodeAt(16, this._coordinates);
+            }
+        }
         // Update bomb.
+        // Move bomb.
         this.bomb.position.y -= 0.005;
         if (this.bomb.position.y < 0) {
             this.bomb.position.y = -1;
         }
+        // Check bomb collision.
         let xBomb: number = this.bombCoordinates.x;
         let tBomb: Tower = this.city.towers[xBomb];
         if (tBomb) {

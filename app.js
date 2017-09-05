@@ -59,6 +59,7 @@ class Bombardier extends BABYLON.Mesh {
         this.k = 0;
         this.Update = () => {
             // Update plane.
+            // Move plane.
             this.k += 0.01;
             this.getChildren()[0].position.y = 0.05 * Math.cos(this.k);
             this.rotation.x = Math.PI / 8 * Math.cos(this.k);
@@ -68,11 +69,23 @@ class Bombardier extends BABYLON.Mesh {
                 this.position.y -= 0.15;
                 this.position.x = -0.18;
             }
+            // Check Bombardier collision.
+            let xBombardier = this.coordinates.x;
+            let tBombardier = this.city.towers[xBombardier];
+            if (tBombardier) {
+                let yBombardier = this._coordinates.y;
+                let bBombardier = tBombardier.blocks[yBombardier];
+                if (bBombardier) {
+                    this.city.ExplodeAt(16, this._coordinates);
+                }
+            }
             // Update bomb.
+            // Move bomb.
             this.bomb.position.y -= 0.005;
             if (this.bomb.position.y < 0) {
                 this.bomb.position.y = -1;
             }
+            // Check bomb collision.
             let xBomb = this.bombCoordinates.x;
             let tBomb = this.city.towers[xBomb];
             if (tBomb) {
@@ -129,6 +142,7 @@ class Bombardier extends BABYLON.Mesh {
     Start() {
         this.getScene().registerBeforeRender(this.Update);
         window.addEventListener("keydown", this.DropBomb);
+        window.addEventListener("pointerdown", this.DropBomb);
     }
 }
 class City extends BABYLON.Mesh {
@@ -140,6 +154,7 @@ class City extends BABYLON.Mesh {
     }
     Initialize(heights) {
         console.log("Initialize City");
+        this.towers = [];
         this.position.x = -(heights.length - 1) / 2 * City.XValue;
         this.xEnd = (heights.length - 1) * City.XValue;
         heights.forEach((h, i) => {
@@ -147,6 +162,11 @@ class City extends BABYLON.Mesh {
             tower.Initialize(i, h);
             tower.position.x = i * 0.18;
             this.towers[i] = tower;
+        });
+    }
+    Dispose() {
+        this.towers.forEach((t) => {
+            t.Dispose();
         });
     }
     ExplodeAt(count, coordinates) {
@@ -173,6 +193,13 @@ class City extends BABYLON.Mesh {
             this.getScene().registerBeforeRender(update);
         }
     }
+    static CreateCityData(size, min, max) {
+        let heights = [];
+        for (let i = 0; i < size; i++) {
+            heights.push(Math.floor(Math.random() * (max - min) + min));
+        }
+        return heights;
+    }
 }
 City.XValue = 0.18;
 City.YValue = 0.15;
@@ -190,8 +217,9 @@ class CityCoordinates {
 }
 class Main {
     constructor(canvasElement) {
+        Main.instance = this;
         this.canvas = document.getElementById(canvasElement);
-        this.engine = new BABYLON.Engine(this.canvas, true);
+        this.engine = new BABYLON.Engine(this.canvas, true, {}, true);
         BABYLON.Engine.ShadersRepository = "./shaders/";
     }
     createScene() {
@@ -203,8 +231,13 @@ class Main {
         this.camera = new BABYLON.ArcRotateCamera("MenuCamera", 0, 0, 1, new BABYLON.Vector3(0, 1.2, 0), this.scene);
         this.camera.attachControl(this.canvas);
         this.camera.setPosition(new BABYLON.Vector3(1, 1.8, -2));
-        this.camera.wheelPrecision *= 50;
+        this.camera.wheelPrecision *= 100;
+        this.camera.pinchPrecision *= 100;
         this.camera.minZ = 0.05;
+        this.camera.lowerBetaLimit = 3 * Math.PI / 8;
+        this.camera.upperBetaLimit = 5 * Math.PI / 8;
+        this.camera.lowerRadiusLimit = 1;
+        this.camera.upperRadiusLimit = 3;
         let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
         skybox.rotation.y = Math.PI / 2;
         skybox.infiniteDistance = true;
@@ -215,16 +248,11 @@ class Main {
         skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         skybox.material = skyboxMaterial;
-        let menu = new MainMenu2D();
-        //menu.CreateUI();
+        this.city = new City(this.scene);
+        this.city.position.y = 0.9;
         BlockLoader.LoadBlockData(this.scene, () => {
-            let city = new City(this.scene);
-            city.position.y = 0.9;
-            city.Initialize([3, 2, 4, 5, 2, 0, 1, 3, 5, 3]);
-            let bombardier = new Bombardier(city);
-            bombardier.Initialize(7, () => {
-                bombardier.Start();
-            });
+            this.mainMenu = new MainMenu2D();
+            this.mainMenu.CreateUI();
         });
     }
     animate() {
@@ -237,6 +265,33 @@ class Main {
     }
     resize() {
         this.engine.resize();
+    }
+    StartEasyMode() {
+        console.log("Initialize Easy Mode");
+        this.city.Initialize(City.CreateCityData(7, 1, 3));
+        this.bombardier = new Bombardier(this.city);
+        this.bombardier.Initialize(7, () => {
+            this.bombardier.Start();
+            this.mainMenu.DisposeUI();
+        });
+    }
+    StartNormalMode() {
+        console.log("Initialize Easy Mode");
+        this.city.Initialize(City.CreateCityData(7, 2, 4));
+        this.bombardier = new Bombardier(this.city);
+        this.bombardier.Initialize(7, () => {
+            this.bombardier.Start();
+            this.mainMenu.DisposeUI();
+        });
+    }
+    StartHardMode() {
+        console.log("Initialize Easy Mode");
+        this.city.Initialize(City.CreateCityData(7, 3, 5));
+        this.bombardier = new Bombardier(this.city);
+        this.bombardier.Initialize(7, () => {
+            this.bombardier.Start();
+            this.mainMenu.DisposeUI();
+        });
     }
 }
 window.addEventListener("DOMContentLoaded", () => {
@@ -324,6 +379,12 @@ class Tower extends BABYLON.Mesh {
         }
         this.blocks[h] = new Block(BlockType.Top, this);
         this.blocks[h].position.y = 0.15 * (h);
+    }
+    Dispose() {
+        this.blocks.forEach((b) => {
+            b.dispose();
+        });
+        this.dispose();
     }
     TakeHit() {
         if (this.blocks.length > 0) {
@@ -441,7 +502,7 @@ class MainMenu {
 }
 class MainMenu2D extends MainMenu {
     CreateUI() {
-        let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        this._advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         let title = BABYLON.GUI.Button.CreateSimpleButton("title", "Holo Bombardier");
         title.width = 0.35;
         title.height = 0.1;
@@ -450,26 +511,36 @@ class MainMenu2D extends MainMenu {
         title.color = "#232323";
         title.top = 100;
         title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        advancedTexture.addControl(title);
+        this._advancedTexture.addControl(title);
         let easyMode = BABYLON.GUI.Button.CreateSimpleButton("easy-mode", "Easy");
         MainMenu.SetHoloBombButton(easyMode, 1);
-        advancedTexture.addControl(easyMode);
+        this._advancedTexture.addControl(easyMode);
+        easyMode.onPointerDownObservable.add((p) => {
+            Main.instance.StartEasyMode();
+        });
         let normalMode = BABYLON.GUI.Button.CreateSimpleButton("normal-mode", "Normal");
         MainMenu.SetHoloBombButton(normalMode, 2);
-        advancedTexture.addControl(normalMode);
+        this._advancedTexture.addControl(normalMode);
+        normalMode.onPointerDownObservable.add((p) => {
+            Main.instance.StartNormalMode();
+        });
         let hardMode = BABYLON.GUI.Button.CreateSimpleButton("hard-mode", "Hard");
         MainMenu.SetHoloBombButton(hardMode, 3);
-        advancedTexture.addControl(hardMode);
+        this._advancedTexture.addControl(hardMode);
+        hardMode.onPointerDownObservable.add((p) => {
+            Main.instance.StartHardMode();
+        });
         let screenMode = BABYLON.GUI.Button.CreateImageOnlyButton("screen-mode", "./datas/screen-mode.png");
         MainMenu.SetHoloBombSquareButton(screenMode, 4);
         screenMode.left = -125;
-        advancedTexture.addControl(screenMode);
+        this._advancedTexture.addControl(screenMode);
         let vrMode = BABYLON.GUI.Button.CreateImageOnlyButton("vr-mode", "./datas/vr-mode.png");
         MainMenu.SetHoloBombSquareButton(vrMode, 4);
         vrMode.left = 125;
-        advancedTexture.addControl(vrMode);
+        this._advancedTexture.addControl(vrMode);
         MainMenu.DeactivateButton(vrMode);
     }
     DisposeUI() {
+        this._advancedTexture.dispose();
     }
 }
