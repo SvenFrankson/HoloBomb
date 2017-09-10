@@ -16,6 +16,8 @@ class MainMenuVR extends MainMenu {
             if (pickInfo.hit) {
                 if (pickInfo.pickedMesh.name === "EasyMesh") {
                     Main.instance.StartEasyMode();
+                } else if (pickInfo.pickedMesh.name === "NormalMesh") {
+                    Main.instance.StartNormalMode();
                 }
             }
         }
@@ -30,16 +32,24 @@ class MainMenuVR extends MainMenu {
 
     public CreateUI(scene: BABYLON.Scene): void {
         this.scene = scene;
+
         let easyMesh: BABYLON.Mesh = BABYLON.MeshBuilder.CreatePlane("EasyMesh", {width: 0.5, height: 0.25}, scene);
-        easyMesh.position.y = 1.5;
+        easyMesh.position.y = 1.8;
         this.meshes.push(easyMesh);
         let advancedTextureEasyMode = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(easyMesh, 512, 512, false);
         let easyMode: BABYLON.GUI.Button = BABYLON.GUI.Button.CreateSimpleButton("easy-mode", "Easy");
-        easyMode.width = 1;
-        easyMode.height = 1;
         MainMenu.SetHoloBombButtonDesign(easyMode);
         easyMode.fontSize = 120;
         advancedTextureEasyMode.addControl(easyMode);
+        
+        let normalMesh: BABYLON.Mesh = BABYLON.MeshBuilder.CreatePlane("NormalMesh", {width: 0.5, height: 0.25}, scene);
+        normalMesh.position.y = 1.4;
+        this.meshes.push(normalMesh);
+        let advanceTextureNormalMode = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(normalMesh, 512, 512, false);
+        let normalMode: BABYLON.GUI.Button = BABYLON.GUI.Button.CreateSimpleButton("normal-mode", "Normal");
+        MainMenu.SetHoloBombButtonDesign(normalMode);
+        normalMode.fontSize = 120;
+        advanceTextureNormalMode.addControl(normalMode);
 
         this.observer = this.scene.onPointerObservable.add(this.onPointerObservable);
         this.scene.registerBeforeRender(this.updateMeshes);

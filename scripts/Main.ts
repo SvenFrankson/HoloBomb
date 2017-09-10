@@ -9,6 +9,7 @@ class Main {
 	public city: City;
 	public bombardier: Bombardier;
 	public mainMenu: MainMenu;
+	public vrCursor: BABYLON.Mesh;
 
 	constructor(canvasElement: string) {
 		Main.instance = this;
@@ -73,6 +74,7 @@ class Main {
 	}
 
 	public createArcRotateCamera(): void {
+		this.disposeVRCursor();
 		if (this.camera) {
 			this.camera.dispose();
 		}
@@ -97,6 +99,28 @@ class Main {
 		vrCamera.setTarget(new BABYLON.Vector3(0, 1.2, 0));
 		vrCamera.attachControl(this.canvas);
 		this.camera = vrCamera;
+		this.createVRCursor();
+	}
+
+	public createVRCursor(): void {
+		this.vrCursor = BABYLON.MeshBuilder.CreateSphere("vrCursor", {diameter: 0.2}, this.scene);
+		this.vrCursor.position.copyFromFloats(0, 0, 10);
+		this.vrCursor.parent = this.camera;
+		let vrCursorMaterial: BABYLON.StandardMaterial = new BABYLON.StandardMaterial("vrCursorMaterial", this.scene);
+		vrCursorMaterial.diffuseColor.copyFromFloats(0, 0, 0);
+		vrCursorMaterial.specularColor.copyFromFloats(0, 0, 0);
+		vrCursorMaterial.emissiveColor.copyFromFloats(1, 1, 1);
+		this.vrCursor.material = vrCursorMaterial;
+		this.vrCursor.renderOutline = true;
+		this.vrCursor.outlineColor.copyFromFloats(0, 0, 0);
+		this.vrCursor.outlineWidth = 0.05;
+		this.vrCursor.renderingGroupId = 1;
+	}
+
+	public disposeVRCursor(): void {
+		if (this.vrCursor) {
+			this.vrCursor.dispose();
+		}
 	}
 
 	public StartEasyMode(): void {

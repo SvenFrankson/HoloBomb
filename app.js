@@ -315,6 +315,7 @@ class Main {
         this.engine.resize();
     }
     createArcRotateCamera() {
+        this.disposeVRCursor();
         if (this.camera) {
             this.camera.dispose();
         }
@@ -338,6 +339,26 @@ class Main {
         vrCamera.setTarget(new BABYLON.Vector3(0, 1.2, 0));
         vrCamera.attachControl(this.canvas);
         this.camera = vrCamera;
+        this.createVRCursor();
+    }
+    createVRCursor() {
+        this.vrCursor = BABYLON.MeshBuilder.CreateSphere("vrCursor", { diameter: 0.2 }, this.scene);
+        this.vrCursor.position.copyFromFloats(0, 0, 10);
+        this.vrCursor.parent = this.camera;
+        let vrCursorMaterial = new BABYLON.StandardMaterial("vrCursorMaterial", this.scene);
+        vrCursorMaterial.diffuseColor.copyFromFloats(0, 0, 0);
+        vrCursorMaterial.specularColor.copyFromFloats(0, 0, 0);
+        vrCursorMaterial.emissiveColor.copyFromFloats(1, 1, 1);
+        this.vrCursor.material = vrCursorMaterial;
+        this.vrCursor.renderOutline = true;
+        this.vrCursor.outlineColor.copyFromFloats(0, 0, 0);
+        this.vrCursor.outlineWidth = 0.05;
+        this.vrCursor.renderingGroupId = 1;
+    }
+    disposeVRCursor() {
+        if (this.vrCursor) {
+            this.vrCursor.dispose();
+        }
     }
     StartEasyMode() {
         console.log("Initialize Easy Mode");
@@ -648,6 +669,9 @@ class MainMenuVR extends MainMenu {
                     if (pickInfo.pickedMesh.name === "EasyMesh") {
                         Main.instance.StartEasyMode();
                     }
+                    else if (pickInfo.pickedMesh.name === "NormalMesh") {
+                        Main.instance.StartNormalMode();
+                    }
                 }
             }
         };
@@ -660,15 +684,21 @@ class MainMenuVR extends MainMenu {
     CreateUI(scene) {
         this.scene = scene;
         let easyMesh = BABYLON.MeshBuilder.CreatePlane("EasyMesh", { width: 0.5, height: 0.25 }, scene);
-        easyMesh.position.y = 1.5;
+        easyMesh.position.y = 1.8;
         this.meshes.push(easyMesh);
         let advancedTextureEasyMode = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(easyMesh, 512, 512, false);
         let easyMode = BABYLON.GUI.Button.CreateSimpleButton("easy-mode", "Easy");
-        easyMode.width = 1;
-        easyMode.height = 1;
         MainMenu.SetHoloBombButtonDesign(easyMode);
         easyMode.fontSize = 120;
         advancedTextureEasyMode.addControl(easyMode);
+        let normalMesh = BABYLON.MeshBuilder.CreatePlane("NormalMesh", { width: 0.5, height: 0.25 }, scene);
+        normalMesh.position.y = 1.4;
+        this.meshes.push(normalMesh);
+        let advanceTextureNormalMode = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(normalMesh, 512, 512, false);
+        let normalMode = BABYLON.GUI.Button.CreateSimpleButton("normal-mode", "Normal");
+        MainMenu.SetHoloBombButtonDesign(normalMode);
+        normalMode.fontSize = 120;
+        advanceTextureNormalMode.addControl(normalMode);
         this.observer = this.scene.onPointerObservable.add(this.onPointerObservable);
         this.scene.registerBeforeRender(this.updateMeshes);
     }
