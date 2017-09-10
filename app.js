@@ -279,16 +279,7 @@ class Main {
         this.light = new BABYLON.HemisphericLight("Light", BABYLON.Vector3.Up(), this.scene);
         this.light.diffuse.copyFromFloats(1, 1, 1);
         this.light.groundColor.copyFromFloats(0.4, 0.4, 0.4);
-        this.camera = new BABYLON.ArcRotateCamera("MenuCamera", 0, 0, 1, new BABYLON.Vector3(0, 1.2, 0), this.scene);
-        this.camera.attachControl(this.canvas);
-        this.camera.setPosition(new BABYLON.Vector3(1, 1.8, -2));
-        this.camera.wheelPrecision *= 100;
-        this.camera.pinchPrecision *= 100;
-        this.camera.minZ = 0.05;
-        this.camera.lowerBetaLimit = 3 * Math.PI / 8;
-        this.camera.upperBetaLimit = 5 * Math.PI / 8;
-        this.camera.lowerRadiusLimit = 1;
-        this.camera.upperRadiusLimit = 3;
+        this.createVRCamera();
         let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
         skybox.infiniteDistance = true;
         let skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
@@ -307,7 +298,7 @@ class Main {
         });
         this.city = new City(this.scene);
         this.city.position.y = 0.9;
-        this.mainMenu = new MainMenu2D();
+        this.mainMenu = new MainMenuVR();
         BlockLoader.LoadBlockData(this.scene, () => {
             this.GoToMainMenu();
         });
@@ -322,6 +313,31 @@ class Main {
     }
     resize() {
         this.engine.resize();
+    }
+    createArcRotateCamera() {
+        if (this.camera) {
+            this.camera.dispose();
+        }
+        let arcRotateCamera = new BABYLON.ArcRotateCamera("MenuCamera", 0, 0, 1, new BABYLON.Vector3(0, 1.2, 0), this.scene);
+        arcRotateCamera.attachControl(this.canvas);
+        arcRotateCamera.setPosition(new BABYLON.Vector3(1, 1.8, -2));
+        arcRotateCamera.wheelPrecision *= 100;
+        arcRotateCamera.pinchPrecision *= 100;
+        arcRotateCamera.minZ = 0.05;
+        arcRotateCamera.lowerBetaLimit = 3 * Math.PI / 8;
+        arcRotateCamera.upperBetaLimit = 5 * Math.PI / 8;
+        arcRotateCamera.lowerRadiusLimit = 1;
+        arcRotateCamera.upperRadiusLimit = 3;
+        this.camera = arcRotateCamera;
+    }
+    createVRCamera() {
+        if (this.camera) {
+            this.camera.dispose();
+        }
+        let vrCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(1, 1.8, -2), this.scene);
+        vrCamera.setTarget(new BABYLON.Vector3(0, 1.2, 0));
+        vrCamera.attachControl(this.canvas);
+        this.camera = vrCamera;
     }
     StartEasyMode() {
         console.log("Initialize Easy Mode");
@@ -354,13 +370,18 @@ class Main {
         });
     }
     GoToMainMenu() {
-        this.mainMenu.CreateUI();
+        this.mainMenu.CreateUI(this.scene);
     }
 }
 window.addEventListener("DOMContentLoaded", () => {
     let game = new Main("render-canvas");
     game.createScene();
     game.animate();
+    let firstClick = () => {
+        game.engine.switchFullscreen(true);
+        game.canvas.removeEventListener("pointerup", firstClick);
+    };
+    game.canvas.addEventListener("pointerup", firstClick);
     BABYLON.SceneLoader.ImportMesh("", "./datas/test.babylon", "", game.scene, (meshes) => {
         meshes.forEach((m) => {
             if (m.name.startsWith("Hologram")) {
@@ -533,12 +554,15 @@ class HoloMaterial extends BABYLON.ShaderMaterial {
     }
 }
 class MainMenu {
-    static SetHoloBombButton(button, row) {
-        button.width = 0.2;
-        button.height = "100px";
+    static SetHoloBombButtonDesign(button) {
         button.fontSize = 40;
         button.background = "#1c1c1c";
         button.color = "white";
+    }
+    static SetHoloBombButton(button, row) {
+        MainMenu.SetHoloBombButtonDesign(button);
+        button.width = 0.2;
+        button.height = "100px";
         button.top = (100 + row * 125) + "px";
         button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         MainMenu.DeactivateButton(button);
@@ -566,7 +590,7 @@ class MainMenu {
     }
 }
 class MainMenu2D extends MainMenu {
-    CreateUI() {
+    CreateUI(scene) {
         this._advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         this._advancedTexture.idealHeight = 900;
         let title = BABYLON.GUI.Button.CreateSimpleButton("title", "Holo Bombardier");
@@ -609,5 +633,50 @@ class MainMenu2D extends MainMenu {
     DisposeUI() {
         Main.instance.resize();
         this._advancedTexture.dispose();
+    }
+}
+class MainMenuVR extends MainMenu {
+    constructor() {
+        super(...arguments);
+        this.meshes = [];
+        this.onPointerObservable = (eventData, eventState) => {
+            if (eventData.type === BABYLON.PointerEventTypes._POINTERUP) {
+                let pickInfo = this.scene.pickWithRay(this.scene.activeCamera.getForwardRay(), (m) => {
+                    return (this.meshes.indexOf(m) !== -1);
+                });
+                if (pickInfo.hit) {
+                    if (pickInfo.pickedMesh.name === "EasyMesh") {
+                        Main.instance.StartEasyMode();
+                    }
+                }
+            }
+        };
+        this.updateMeshes = () => {
+            this.meshes.forEach((m) => {
+                m.lookAt(this.scene.activeCamera.position);
+            });
+        };
+    }
+    CreateUI(scene) {
+        this.scene = scene;
+        let easyMesh = BABYLON.MeshBuilder.CreatePlane("EasyMesh", { width: 0.5, height: 0.25 }, scene);
+        easyMesh.position.y = 1.5;
+        this.meshes.push(easyMesh);
+        let advancedTextureEasyMode = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(easyMesh, 512, 512, false);
+        let easyMode = BABYLON.GUI.Button.CreateSimpleButton("easy-mode", "Easy");
+        easyMode.width = 1;
+        easyMode.height = 1;
+        MainMenu.SetHoloBombButtonDesign(easyMode);
+        easyMode.fontSize = 120;
+        advancedTextureEasyMode.addControl(easyMode);
+        this.observer = this.scene.onPointerObservable.add(this.onPointerObservable);
+        this.scene.registerBeforeRender(this.updateMeshes);
+    }
+    DisposeUI() {
+        this.meshes.forEach((m) => {
+            m.dispose();
+        });
+        this.scene.onPointerObservable.remove(this.observer);
+        this.scene.unregisterBeforeRender(this.updateMeshes);
     }
 }

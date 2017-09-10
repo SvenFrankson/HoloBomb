@@ -1,13 +1,17 @@
 abstract class MainMenu {
-    public abstract CreateUI(): void;
+    public abstract CreateUI(scene: BABYLON.Scene): void;
     public abstract DisposeUI(): void;
 
-    public static SetHoloBombButton(button: BABYLON.GUI.Button, row: number): void {
-        button.width = 0.2;
-        button.height = "100px";
+    public static SetHoloBombButtonDesign(button: BABYLON.GUI.Button): void {
         button.fontSize = 40;
         button.background = "#1c1c1c";
         button.color = "white";
+    }
+
+    public static SetHoloBombButton(button: BABYLON.GUI.Button, row: number): void {
+        MainMenu.SetHoloBombButtonDesign(button);
+        button.width = 0.2;
+        button.height = "100px";
         button.top = (100 + row * 125) + "px";
         button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
 

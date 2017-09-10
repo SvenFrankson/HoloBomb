@@ -2,7 +2,7 @@ class MainMenu2D extends MainMenu {
     
     private _advancedTexture: BABYLON.GUI.AdvancedDynamicTexture;
 
-    public CreateUI(): void {
+    public CreateUI(scene: BABYLON.Scene): void {
         this._advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         this._advancedTexture.idealHeight = 900;
 
