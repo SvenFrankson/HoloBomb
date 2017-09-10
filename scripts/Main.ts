@@ -9,13 +9,11 @@ class Main {
   public city: City;
   public bombardier: Bombardier;
   public mainMenu: MainMenu;
-  public backupHardWareScaling: number = 0;
 
   constructor(canvasElement: string) {
     Main.instance = this;
     this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
     this.engine = new BABYLON.Engine(this.canvas, true, {}, true);
-    this.backupHardWareScaling = this.engine.getHardwareScalingLevel();
     BABYLON.Engine.ShadersRepository = "./shaders/";
   }
 

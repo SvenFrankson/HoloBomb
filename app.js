@@ -268,11 +268,9 @@ class CityCoordinates {
 }
 class Main {
     constructor(canvasElement) {
-        this.backupHardWareScaling = 0;
         Main.instance = this;
         this.canvas = document.getElementById(canvasElement);
         this.engine = new BABYLON.Engine(this.canvas, true, {}, true);
-        this.backupHardWareScaling = this.engine.getHardwareScalingLevel();
         BABYLON.Engine.ShadersRepository = "./shaders/";
     }
     createScene() {
@@ -533,6 +531,7 @@ class MainMenu {
         button.height = "100px";
         button.fontSize = 40;
         button.background = "#1c1c1c";
+        button.color = "white";
         button.top = (100 + row * 125) + "px";
         button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         MainMenu.DeactivateButton(button);
@@ -561,8 +560,6 @@ class MainMenu {
 }
 class MainMenu2D extends MainMenu {
     CreateUI() {
-        Main.instance.engine.setHardwareScalingLevel(1);
-        Main.instance.resize();
         this._advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         this._advancedTexture.idealHeight = 900;
         let title = BABYLON.GUI.Button.CreateSimpleButton("title", "Holo Bombardier");
@@ -570,7 +567,7 @@ class MainMenu2D extends MainMenu {
         title.height = 0.1;
         title.fontSize = 64;
         title.background = "#232323";
-        title.color = "#232323";
+        title.color = "white";
         title.top = 100;
         title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         this._advancedTexture.addControl(title);
@@ -603,7 +600,6 @@ class MainMenu2D extends MainMenu {
         MainMenu.DeactivateButton(vrMode);
     }
     DisposeUI() {
-        Main.instance.engine.setHardwareScalingLevel(Main.instance.backupHardWareScaling);
         Main.instance.resize();
         this._advancedTexture.dispose();
     }

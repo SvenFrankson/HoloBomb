@@ -3,8 +3,6 @@ class MainMenu2D extends MainMenu {
     private _advancedTexture: BABYLON.GUI.AdvancedDynamicTexture;
 
     public CreateUI(): void {
-        Main.instance.engine.setHardwareScalingLevel(1);
-        Main.instance.resize();
         this._advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
         this._advancedTexture.idealHeight = 900;
 
@@ -13,7 +11,7 @@ class MainMenu2D extends MainMenu {
         title.height = 0.1;
         title.fontSize = 64;
         title.background = "#232323";
-        title.color = "#232323";
+        title.color = "white";
         title.top = 100;
         title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
         this._advancedTexture.addControl(title);
@@ -58,7 +56,6 @@ class MainMenu2D extends MainMenu {
     }
 
     public DisposeUI(): void {
-        Main.instance.engine.setHardwareScalingLevel(Main.instance.backupHardWareScaling);
         Main.instance.resize();
         this._advancedTexture.dispose();
     }

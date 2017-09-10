@@ -7,6 +7,7 @@ abstract class MainMenu {
         button.height = "100px";
         button.fontSize = 40;
         button.background = "#1c1c1c";
+        button.color = "white";
         button.top = (100 + row * 125) + "px";
         button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
 
