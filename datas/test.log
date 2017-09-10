@@ -7,10 +7,21 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 		texture directory:  C:\Users\Sven\Documents\SvenFrankson\HoloBomb\datas\
 	Python World class constructor completed
 	WARNING: No active camera has been assigned, or is not in a currently selected Blender layer
-	processing begun of mesh:  Back
+	processing begun of mesh:  Wall.001
 		processing begun of Standard material:  WallFrame
 		processing begun of Standard material:  WallBox
+		processing begun of Standard material:  Glass
 		processing begun of multimaterial:  test.Multimaterial#0
+		num positions      :  96
+		num normals        :  96
+		num uvs            :  192
+		num uvs2           :  0
+		num colors         :  0
+		num indices        :  420
+	processing begun of mesh:  Back
+		registered as also a user of material:  WallFrame
+		registered as also a user of material:  WallBox
+		processing begun of multimaterial:  test.Multimaterial#1
 		num positions      :  851
 		num normals        :  851
 		num uvs            :  1702
@@ -18,7 +29,7 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 		num colors         :  0
 		num indices        :  1992
 	processing begun of mesh:  Ceiling
-		WARNING: No materials have been assigned: 
+		processing begun of Standard material:  Ceiling
 		num positions      :  4
 		num normals        :  4
 		num uvs            :  0
@@ -28,8 +39,8 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 	processing begun of mesh:  Wall
 		registered as also a user of material:  WallFrame
 		registered as also a user of material:  WallBox
-		processing begun of Standard material:  Glass
-		processing begun of multimaterial:  test.Multimaterial#1
+		registered as also a user of material:  Glass
+		processing begun of multimaterial:  test.Multimaterial#2
 		num positions      :  300
 		num normals        :  300
 		num uvs            :  600
@@ -37,7 +48,7 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 		num colors         :  0
 		num indices        :  540
 	processing begun of mesh:  Floor
-		WARNING: No materials have been assigned: 
+		processing begun of Standard material:  Floor
 		num positions      :  4
 		num normals        :  4
 		num uvs            :  0
@@ -95,4 +106,4 @@ Exporter version: 5.2.0, Blender version: 2.78 (sub 0)
 ========= Writing of scene file started =========
 ========= Writing of scene file completed =========
 ========= end of processing =========
-elapsed time:  0 min, 1.2693 secs
+elapsed time:  0 min, 1.1439 secs

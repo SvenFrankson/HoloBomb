@@ -290,7 +290,6 @@ class Main {
         this.camera.lowerRadiusLimit = 1;
         this.camera.upperRadiusLimit = 3;
         let skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
-        skybox.rotation.y = Math.PI / 2;
         skybox.infiniteDistance = true;
         let skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this.scene);
         skyboxMaterial.backFaceCulling = false;
@@ -299,6 +298,13 @@ class Main {
         skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         skybox.material = skyboxMaterial;
+        let k = 0;
+        this.scene.registerBeforeRender(() => {
+            skybox.rotation.x += 0.0002 * Math.cos(k);
+            skybox.rotation.y += 0.0002 * Math.cos(2 * k);
+            skybox.rotation.z += 0.0002 * Math.cos(3 * k);
+            k += 0.0001;
+        });
         this.city = new City(this.scene);
         this.city.position.y = 0.9;
         this.mainMenu = new MainMenu2D();
@@ -410,6 +416,7 @@ window.addEventListener("DOMContentLoaded", () => {
                     }
                     if (sm.name.endsWith("WallBox")) {
                         if (sm instanceof BABYLON.StandardMaterial) {
+                            sm.diffuseTexture = new BABYLON.Texture("./datas/textures/wall-metal.jpg", game.scene);
                             sm.diffuseColor.copyFromFloats(0.25, 0.25, 0.25);
                             sm.specularColor.copyFromFloats(0.5, 0.5, 0.5);
                         }
