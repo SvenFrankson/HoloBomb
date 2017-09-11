@@ -383,23 +383,23 @@ class Main {
         this.city.Dispose();
         this.city.Initialize(City.CreateCityData(10, 1, 3));
         this.bombardier = new Bombardier(this.city);
-        this.bombardier.Initialize(5, () => {
+        this.bombardier.Initialize(7, () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
         });
     }
     StartNormalMode() {
-        console.log("Initialize Easy Mode");
+        console.log("Initialize Normal Mode");
         this.city.Dispose();
         this.city.Initialize(City.CreateCityData(10, 2, 5));
         this.bombardier = new Bombardier(this.city);
-        this.bombardier.Initialize(6, () => {
+        this.bombardier.Initialize(7, () => {
             this.bombardier.Start();
             this.mainMenu.DisposeUI();
         });
     }
     StartHardMode() {
-        console.log("Initialize Easy Mode");
+        console.log("Initialize Hard Mode");
         this.city.Dispose();
         this.city.Initialize(City.CreateCityData(10, 3, 7));
         this.bombardier = new Bombardier(this.city);

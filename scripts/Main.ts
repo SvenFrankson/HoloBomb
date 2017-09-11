@@ -149,7 +149,7 @@ class Main {
 		this.city.Initialize(City.CreateCityData(10, 1, 3));
 		this.bombardier = new Bombardier(this.city);
 		this.bombardier.Initialize(
-			5,
+			7,
 			() => {
 				this.bombardier.Start();
 				this.mainMenu.DisposeUI();
@@ -158,12 +158,12 @@ class Main {
 	}
 
 	public StartNormalMode(): void {
-		console.log("Initialize Easy Mode");
+		console.log("Initialize Normal Mode");
 		this.city.Dispose();
 		this.city.Initialize(City.CreateCityData(10, 2, 5));
 		this.bombardier = new Bombardier(this.city);
 		this.bombardier.Initialize(
-			6,
+			7,
 			() => {
 				this.bombardier.Start();
 				this.mainMenu.DisposeUI();
@@ -172,7 +172,7 @@ class Main {
 	}
 
 	public StartHardMode(): void {
-		console.log("Initialize Easy Mode");
+		console.log("Initialize Hard Mode");
 		this.city.Dispose();
 		this.city.Initialize(City.CreateCityData(10, 3, 7));
 		this.bombardier = new Bombardier(this.city);
