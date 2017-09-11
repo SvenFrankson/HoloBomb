@@ -53,6 +53,11 @@ class MainMenu2D extends MainMenu {
         vrMode.left = 125;
         this._advancedTexture.addControl(vrMode);
         MainMenu.DeactivateButton(vrMode);
+        vrMode.onPointerUpObservable.add(
+            (p: BABYLON.Vector2) => {
+                Main.instance.switchToVR();
+            }
+        )
     }
 
     public DisposeUI(): void {

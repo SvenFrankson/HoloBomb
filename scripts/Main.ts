@@ -26,7 +26,7 @@ class Main {
 		this.light.diffuse.copyFromFloats(1, 1, 1);
 		this.light.groundColor.copyFromFloats(0.4, 0.4, 0.4);
 
-		this.createVRCamera();
+		this.createArcRotateCamera();
 
 		let skybox: BABYLON.Mesh = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, this.scene);
 		skybox.infiniteDistance = true;
@@ -50,7 +50,7 @@ class Main {
 
 		this.city = new City(this.scene);
 		this.city.position.y = 0.9;
-		this.mainMenu = new MainMenuVR();
+		this.mainMenu = new MainMenu2D();
 		BlockLoader.LoadBlockData(
 			this.scene,
 			() => {
@@ -71,6 +71,26 @@ class Main {
 
 	public resize(): void {
 		this.engine.resize();
+	}
+
+	public switchToVR(): void {
+		console.log("Switch to VR");
+		this.createVRCamera();
+        this.engine.switchFullscreen(true);
+		var nextFrame = () => {
+			this.engine.resize();
+			if (this.mainMenu) {
+				this.mainMenu.DisposeUI();
+			}
+			this.mainMenu = new MainMenuVR();
+			this.mainMenu.CreateUI(this.scene);
+            this.scene.unregisterBeforeRender(nextFrame);
+        }
+        this.scene.registerBeforeRender(nextFrame);
+	}
+
+	public switchToStandard(): void {
+		location.reload();
 	}
 
 	public createArcRotateCamera(): void {
@@ -95,7 +115,7 @@ class Main {
 		if (this.camera) {
 			this.camera.dispose();
 		}
-		let vrCamera: BABYLON.WebVRFreeCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(1, 1.8, -2), this.scene);
+		let vrCamera: BABYLON.WebVRFreeCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(0.8, 1.8, -1.6), this.scene);
 		vrCamera.setTarget(new BABYLON.Vector3(0, 1.2, 0));
 		vrCamera.attachControl(this.canvas);
 		this.camera = vrCamera;
@@ -174,12 +194,6 @@ window.addEventListener("DOMContentLoaded", () => {
 	let game: Main = new Main("render-canvas");
 	game.createScene();
 	game.animate();
-
-	let firstClick = () => {
-    	game.engine.switchFullscreen(true);
-		game.canvas.removeEventListener("pointerup", firstClick);
-	}
-	game.canvas.addEventListener("pointerup", firstClick);
 
 	BABYLON.SceneLoader.ImportMesh(
 		"",

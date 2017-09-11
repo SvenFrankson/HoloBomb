@@ -1,6 +1,9 @@
 abstract class MainMenu {
     public abstract CreateUI(scene: BABYLON.Scene): void;
     public abstract DisposeUI(): void;
+    public Resize(): void {
+        
+    }
 
     public static SetHoloBombButtonDesign(button: BABYLON.GUI.Button): void {
         button.fontSize = 40;
