@@ -10,8 +10,15 @@ class Main {
 	public bombardier: Bombardier;
 	public mainMenu: MainMenu;
 	public vrCursor: BABYLON.Mesh;
+	public isMobile: boolean = false;
+	public get isVR(): boolean {
+		return this.scene.activeCamera instanceof BABYLON.WebVRFreeCamera;
+	}
 
 	constructor(canvasElement: string) {
+		console.log(window.orientation);
+		this.isMobile = window.orientation !== "undefined";
+		console.log("Is Mobile : " + this.isMobile);
 		Main.instance = this;
 		this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
 		this.engine = new BABYLON.Engine(this.canvas, true, {}, true);
@@ -21,6 +28,14 @@ class Main {
 	createScene(): void {
 		this.scene = new BABYLON.Scene(this.engine);
 		this.resize();
+
+		if (this.isMobile) {
+			var fullScreenOnFirstInput = () => {
+				this.engine.switchFullscreen(true);
+				this.canvas.removeEventListener("pointerup", fullScreenOnFirstInput);
+			}
+			this.canvas.addEventListener("pointerup", fullScreenOnFirstInput);
+		}
 
 		this.light = new BABYLON.HemisphericLight("Light", BABYLON.Vector3.Up(), this.scene);
 		this.light.diffuse.copyFromFloats(1, 1, 1);
@@ -76,7 +91,7 @@ class Main {
 	public switchToVR(): void {
 		console.log("Switch to VR");
 		this.createVRCamera();
-        this.engine.switchFullscreen(true);
+        //this.engine.switchFullscreen(true);
 		var nextFrame = () => {
 			this.engine.resize();
 			if (this.mainMenu) {
@@ -123,8 +138,8 @@ class Main {
 	}
 
 	public createVRCursor(): void {
-		this.vrCursor = BABYLON.MeshBuilder.CreateSphere("vrCursor", {diameter: 0.2}, this.scene);
-		this.vrCursor.position.copyFromFloats(0, 0, 10);
+		this.vrCursor = BABYLON.MeshBuilder.CreateSphere("vrCursor", {diameter: 0.05}, this.scene);
+		this.vrCursor.position.copyFromFloats(0, 0, 3);
 		this.vrCursor.parent = this.camera;
 		let vrCursorMaterial: BABYLON.StandardMaterial = new BABYLON.StandardMaterial("vrCursorMaterial", this.scene);
 		vrCursorMaterial.diffuseColor.copyFromFloats(0, 0, 0);
@@ -133,7 +148,7 @@ class Main {
 		this.vrCursor.material = vrCursorMaterial;
 		this.vrCursor.renderOutline = true;
 		this.vrCursor.outlineColor.copyFromFloats(0, 0, 0);
-		this.vrCursor.outlineWidth = 0.05;
+		this.vrCursor.outlineWidth = 0.005;
 		this.vrCursor.renderingGroupId = 1;
 	}
 
@@ -146,7 +161,7 @@ class Main {
 	public StartEasyMode(): void {
 		console.log("Initialize Easy Mode");
 		this.city.Dispose();
-		this.city.Initialize(City.CreateCityData(10, 1, 3));
+		this.city.Initialize(City.CreateCityData(10, 0, 3));
 		this.bombardier = new Bombardier(this.city);
 		this.bombardier.Initialize(
 			7,
@@ -160,7 +175,7 @@ class Main {
 	public StartNormalMode(): void {
 		console.log("Initialize Normal Mode");
 		this.city.Dispose();
-		this.city.Initialize(City.CreateCityData(10, 2, 5));
+		this.city.Initialize(City.CreateCityData(10, 0, 5));
 		this.bombardier = new Bombardier(this.city);
 		this.bombardier.Initialize(
 			7,
@@ -174,7 +189,7 @@ class Main {
 	public StartHardMode(): void {
 		console.log("Initialize Hard Mode");
 		this.city.Dispose();
-		this.city.Initialize(City.CreateCityData(10, 3, 7));
+		this.city.Initialize(City.CreateCityData(10, 0, 7));
 		this.bombardier = new Bombardier(this.city);
 		this.bombardier.Initialize(
 			7,

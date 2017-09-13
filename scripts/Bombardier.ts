@@ -18,6 +18,9 @@ class Bombardier extends BABYLON.Mesh {
         this.city = city;
         this.parent = this.city;
         this.material = this.city.hologramMaterial;
+        if (Main.instance.isVR) {
+            this._inputDelay = Infinity;
+        }
     }
 
     public Initialize(
@@ -136,12 +139,13 @@ class Bombardier extends BABYLON.Mesh {
     }
 
     private _downTime: number = 0;
+    private _inputDelay: number = 500;
     public InputDown = () => {
         this._downTime = (new Date()).getTime();
     }
     public DropBomb = () => {
         let upTime: number = (new Date()).getTime();
-        if (upTime - this._downTime < 250) {
+        if (upTime - this._downTime < this._inputDelay) {
             if (this.bomb.position.y < 0) {
                 console.log("Bombardier DropBomb");
                 this.bomb.position.copyFrom(this.coordinates);

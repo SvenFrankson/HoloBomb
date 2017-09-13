@@ -123,12 +123,13 @@ class Bombardier extends BABYLON.Mesh {
             }
         };
         this._downTime = 0;
+        this._inputDelay = 500;
         this.InputDown = () => {
             this._downTime = (new Date()).getTime();
         };
         this.DropBomb = () => {
             let upTime = (new Date()).getTime();
-            if (upTime - this._downTime < 250) {
+            if (upTime - this._downTime < this._inputDelay) {
                 if (this.bomb.position.y < 0) {
                     console.log("Bombardier DropBomb");
                     this.bomb.position.copyFrom(this.coordinates);
@@ -140,6 +141,9 @@ class Bombardier extends BABYLON.Mesh {
         this.city = city;
         this.parent = this.city;
         this.material = this.city.hologramMaterial;
+        if (Main.instance.isVR) {
+            this._inputDelay = Infinity;
+        }
     }
     get coordinates() {
         CityCoordinates.CityPositionToCoordinatesToRef(this.position, this._coordinates);
@@ -268,14 +272,28 @@ class CityCoordinates {
 }
 class Main {
     constructor(canvasElement) {
+        this.isMobile = false;
+        console.log(window.orientation);
+        this.isMobile = window.orientation !== "undefined";
+        console.log("Is Mobile : " + this.isMobile);
         Main.instance = this;
         this.canvas = document.getElementById(canvasElement);
         this.engine = new BABYLON.Engine(this.canvas, true, {}, true);
         BABYLON.Engine.ShadersRepository = "./shaders/";
     }
+    get isVR() {
+        return this.scene.activeCamera instanceof BABYLON.WebVRFreeCamera;
+    }
     createScene() {
         this.scene = new BABYLON.Scene(this.engine);
         this.resize();
+        if (this.isMobile) {
+            var fullScreenOnFirstInput = () => {
+                this.engine.switchFullscreen(true);
+                this.canvas.removeEventListener("pointerup", fullScreenOnFirstInput);
+            };
+            this.canvas.addEventListener("pointerup", fullScreenOnFirstInput);
+        }
         this.light = new BABYLON.HemisphericLight("Light", BABYLON.Vector3.Up(), this.scene);
         this.light.diffuse.copyFromFloats(1, 1, 1);
         this.light.groundColor.copyFromFloats(0.4, 0.4, 0.4);
@@ -317,7 +335,7 @@ class Main {
     switchToVR() {
         console.log("Switch to VR");
         this.createVRCamera();
-        this.engine.switchFullscreen(true);
+        //this.engine.switchFullscreen(true);
         var nextFrame = () => {
             this.engine.resize();
             if (this.mainMenu) {
@@ -360,8 +378,8 @@ class Main {
         this.createVRCursor();
     }
     createVRCursor() {
-        this.vrCursor = BABYLON.MeshBuilder.CreateSphere("vrCursor", { diameter: 0.2 }, this.scene);
-        this.vrCursor.position.copyFromFloats(0, 0, 10);
+        this.vrCursor = BABYLON.MeshBuilder.CreateSphere("vrCursor", { diameter: 0.05 }, this.scene);
+        this.vrCursor.position.copyFromFloats(0, 0, 3);
         this.vrCursor.parent = this.camera;
         let vrCursorMaterial = new BABYLON.StandardMaterial("vrCursorMaterial", this.scene);
         vrCursorMaterial.diffuseColor.copyFromFloats(0, 0, 0);
@@ -370,7 +388,7 @@ class Main {
         this.vrCursor.material = vrCursorMaterial;
         this.vrCursor.renderOutline = true;
         this.vrCursor.outlineColor.copyFromFloats(0, 0, 0);
-        this.vrCursor.outlineWidth = 0.05;
+        this.vrCursor.outlineWidth = 0.005;
         this.vrCursor.renderingGroupId = 1;
     }
     disposeVRCursor() {
@@ -381,7 +399,7 @@ class Main {
     StartEasyMode() {
         console.log("Initialize Easy Mode");
         this.city.Dispose();
-        this.city.Initialize(City.CreateCityData(10, 1, 3));
+        this.city.Initialize(City.CreateCityData(10, 0, 3));
         this.bombardier = new Bombardier(this.city);
         this.bombardier.Initialize(7, () => {
             this.bombardier.Start();
@@ -391,7 +409,7 @@ class Main {
     StartNormalMode() {
         console.log("Initialize Normal Mode");
         this.city.Dispose();
-        this.city.Initialize(City.CreateCityData(10, 2, 5));
+        this.city.Initialize(City.CreateCityData(10, 0, 5));
         this.bombardier = new Bombardier(this.city);
         this.bombardier.Initialize(7, () => {
             this.bombardier.Start();
@@ -401,7 +419,7 @@ class Main {
     StartHardMode() {
         console.log("Initialize Hard Mode");
         this.city.Dispose();
-        this.city.Initialize(City.CreateCityData(10, 3, 7));
+        this.city.Initialize(City.CreateCityData(10, 0, 7));
         this.bombardier = new Bombardier(this.city);
         this.bombardier.Initialize(7, () => {
             this.bombardier.Start();
