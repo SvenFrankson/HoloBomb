@@ -17,7 +17,7 @@ class Main {
 
 	constructor(canvasElement: string) {
 		console.log(window.orientation);
-		this.isMobile = window.orientation !== "undefined";
+		this.isMobile = window.orientation !== undefined;
 		console.log("Is Mobile : " + this.isMobile);
 		Main.instance = this;
 		this.canvas = document.getElementById(canvasElement) as HTMLCanvasElement;
