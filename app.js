@@ -206,8 +206,9 @@ class City extends BABYLON.Mesh {
         this.xEnd = (heights.length - 1) * City.XValue;
         heights.forEach((h, i) => {
             let tower = new Tower(this);
-            tower.Initialize(i, h);
             tower.position.x = i * 0.18;
+            this.freezeWorldMatrix();
+            tower.Initialize(i, h);
             this.towers[i] = tower;
         });
     }
@@ -436,6 +437,7 @@ window.addEventListener("DOMContentLoaded", () => {
     game.animate();
     BABYLON.SceneLoader.ImportMesh("", "./datas/test.babylon", "", game.scene, (meshes) => {
         meshes.forEach((m) => {
+            m.freezeWorldMatrix();
             if (m.name.startsWith("Hologram")) {
                 m.material = new HoloMaterial("Holo", game.scene);
             }
@@ -513,9 +515,11 @@ class Tower extends BABYLON.Mesh {
             this.blocks[i] = new Block(BlockType.Block, this);
             this.blocks[i].parent = this;
             this.blocks[i].position.y = 0.15 * i;
+            this.blocks[i].freezeWorldMatrix();
         }
         this.blocks[h] = new Block(BlockType.Top, this);
         this.blocks[h].position.y = 0.15 * (h);
+        this.blocks[h].freezeWorldMatrix();
     }
     Dispose() {
         this.blocks.forEach((b) => {

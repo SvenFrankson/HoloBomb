@@ -15,9 +15,11 @@ class Tower extends BABYLON.Mesh {
             this.blocks[i] = new Block(BlockType.Block, this);
             this.blocks[i].parent = this;
             this.blocks[i].position.y = 0.15 * i;
+            this.blocks[i].freezeWorldMatrix();
         }
         this.blocks[h] = new Block(BlockType.Top, this);
         this.blocks[h].position.y = 0.15 * (h);
+        this.blocks[h].freezeWorldMatrix();
     }
 
     public Dispose(): void {

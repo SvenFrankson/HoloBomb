@@ -220,6 +220,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		) => {
 			meshes.forEach(
 				(m: BABYLON.AbstractMesh) => {
+					m.freezeWorldMatrix();
 					if (m.name.startsWith("Hologram")) {
 						m.material = new HoloMaterial("Holo", game.scene);
 					}

@@ -25,8 +25,9 @@ class City extends BABYLON.Mesh {
                 i: number
             ) => {
                 let tower: Tower = new Tower(this);
-                tower.Initialize(i, h);
                 tower.position.x = i * 0.18;
+                this.freezeWorldMatrix();
+                tower.Initialize(i, h);
                 this.towers[i] = tower;
             }
         );
