@@ -10,6 +10,7 @@ class Main {
 	public bombardier: Bombardier;
 	public mainMenu: MainMenu;
 	public vrCursor: BABYLON.Mesh;
+	private _vrCursorUpdate: () => void;
 	public isMobile: boolean = false;
 	public get isVR(): boolean {
 		return this.scene.activeCamera instanceof BABYLON.WebVRFreeCamera;
@@ -138,9 +139,8 @@ class Main {
 	}
 
 	public createVRCursor(): void {
-		this.vrCursor = BABYLON.MeshBuilder.CreateSphere("vrCursor", {diameter: 0.05}, this.scene);
+		this.vrCursor = BABYLON.MeshBuilder.CreateSphere("vrCursor", {diameter: 1}, this.scene);
 		this.vrCursor.position.copyFromFloats(0, 0, 3);
-		this.vrCursor.parent = this.camera;
 		let vrCursorMaterial: BABYLON.StandardMaterial = new BABYLON.StandardMaterial("vrCursorMaterial", this.scene);
 		vrCursorMaterial.diffuseColor.copyFromFloats(0, 0, 0);
 		vrCursorMaterial.specularColor.copyFromFloats(0, 0, 0);
@@ -150,11 +150,29 @@ class Main {
 		this.vrCursor.outlineColor.copyFromFloats(0, 0, 0);
 		this.vrCursor.outlineWidth = 0.005;
 		this.vrCursor.renderingGroupId = 1;
+		this._vrCursorUpdate = () => {
+			let pickInfo = this.scene.pickWithRay(
+				this.scene.activeCamera.getForwardRay(),
+				(m: BABYLON.Mesh) => {
+					return (m !== this.vrCursor);
+				}
+			);
+			if (pickInfo.hit) {
+				this.vrCursor.position.copyFrom(pickInfo.pickedPoint);
+				this.vrCursor.scaling.copyFromFloats(1, 1, 1);
+				this.vrCursor.scaling.scaleInPlace(pickInfo.distance * 0.025);
+				this.vrCursor.isVisible = true;
+			} else {
+				this.vrCursor.isVisible = false;
+			}
+		};
+		this.scene.registerBeforeRender(this._vrCursorUpdate);
 	}
 
 	public disposeVRCursor(): void {
 		if (this.vrCursor) {
 			this.vrCursor.dispose();
+			this.scene.unregisterBeforeRender(this._vrCursorUpdate);
 		}
 	}
 
