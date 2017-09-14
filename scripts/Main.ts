@@ -131,8 +131,8 @@ class Main {
 		if (this.camera) {
 			this.camera.dispose();
 		}
-		let vrCamera: BABYLON.WebVRFreeCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(0.7, 1.8, -1.4), this.scene);
-		vrCamera.setTarget(new BABYLON.Vector3(0, 1.2, 0));
+		let vrCamera: BABYLON.WebVRFreeCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(0.7, 1.7, -1.1), this.scene);
+		vrCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
 		vrCamera.attachControl(this.canvas);
 		this.camera = vrCamera;
 		this.createVRCursor();

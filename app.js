@@ -372,8 +372,8 @@ class Main {
         if (this.camera) {
             this.camera.dispose();
         }
-        let vrCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(0.7, 1.8, -1.4), this.scene);
-        vrCamera.setTarget(new BABYLON.Vector3(0, 1.2, 0));
+        let vrCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(0.7, 1.7, -1.1), this.scene);
+        vrCamera.setTarget(new BABYLON.Vector3(0, 1.6, 0));
         vrCamera.attachControl(this.canvas);
         this.camera = vrCamera;
         this.createVRCursor();
@@ -670,34 +670,11 @@ class MainMenu {
                 button.pointerDownAnimation =
                     button.pointerUpAnimation = () => { };
     }
-    static SetHoloBombButton(button, row) {
-        MainMenu.SetHoloBombButtonDesign(button);
-        button.width = 0.2;
-        button.height = "100px";
-        button.top = (100 + row * 125) + "px";
-        button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        MainMenu.DeactivateButton(button);
-        button.pointerEnterAnimation = () => {
-            MainMenu.ActivateButton(button);
-        };
-        button.pointerOutAnimation = () => {
-            MainMenu.DeactivateButton(button);
-        };
-    }
-    static SetHoloBombSquareButton(button, row) {
-        button.width = "200px";
-        button.height = "200px";
-        button.background = "#1c1c1c";
-        button.top = (100 + row * 125) + "px";
-        button.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        button.pointerEnterAnimation = undefined;
-        button.pointerOutAnimation = undefined;
-    }
     static ActivateButton(button) {
         button.alpha = 1;
     }
     static DeactivateButton(button) {
-        button.alpha = 0.75;
+        button.alpha = 0.6;
     }
 }
 class MainMenu2D extends MainMenu {
