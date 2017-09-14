@@ -131,7 +131,7 @@ class Main {
 		if (this.camera) {
 			this.camera.dispose();
 		}
-		let vrCamera: BABYLON.WebVRFreeCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(0.8, 1.8, -1.6), this.scene);
+		let vrCamera: BABYLON.WebVRFreeCamera = new BABYLON.WebVRFreeCamera("VRCamera", new BABYLON.Vector3(0.7, 1.8, -1.4), this.scene);
 		vrCamera.setTarget(new BABYLON.Vector3(0, 1.2, 0));
 		vrCamera.attachControl(this.canvas);
 		this.camera = vrCamera;
@@ -150,7 +150,11 @@ class Main {
 		this.vrCursor.outlineColor.copyFromFloats(0, 0, 0);
 		this.vrCursor.outlineWidth = 0.005;
 		this.vrCursor.renderingGroupId = 1;
+		let selectedButton: BABYLON.GUI.Button;
 		this._vrCursorUpdate = () => {
+			if (selectedButton) {
+				selectedButton.pointerOutAnimation();
+			}
 			let pickInfo = this.scene.pickWithRay(
 				this.scene.activeCamera.getForwardRay(),
 				(m: BABYLON.Mesh) => {
@@ -162,6 +166,18 @@ class Main {
 				this.vrCursor.scaling.copyFromFloats(1, 1, 1);
 				this.vrCursor.scaling.scaleInPlace(pickInfo.distance * 0.025);
 				this.vrCursor.isVisible = true;
+				if (this.mainMenu instanceof MainMenuVR) {
+					let mesh: BABYLON.AbstractMesh = pickInfo.pickedMesh;
+					this.mainMenu.meshesButtonsMap.forEach(
+						(b: BABYLON.GUI.Button, m: BABYLON.Mesh) => {
+							if (m === mesh) {
+								b.pointerEnterAnimation();
+								selectedButton = b;
+							}
+						}
+					)
+				}
+				
 			} else {
 				this.vrCursor.isVisible = false;
 			}

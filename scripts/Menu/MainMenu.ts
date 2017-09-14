@@ -14,10 +14,10 @@ abstract class MainMenu {
     public static SetTitle(button: BABYLON.GUI.Button): void {
         button.alpha = 1;
         button.thickness = 0;
-        button.pointerEnterAnimation = undefined;
-        button.pointerOutAnimation = undefined;
-        button.pointerDownAnimation = undefined;
-        button.pointerUpAnimation = undefined;
+        button.pointerEnterAnimation =
+        button.pointerOutAnimation =
+        button.pointerDownAnimation =
+        button.pointerUpAnimation = () => {};
     }
 
     public static SetButton(button: BABYLON.GUI.Button): void {
@@ -33,10 +33,10 @@ abstract class MainMenu {
 
     public static SetStaticButton(button: BABYLON.GUI.Button): void {
         button.thickness = 0;
-        button.pointerEnterAnimation = undefined;
-        button.pointerOutAnimation = undefined;
-        button.pointerDownAnimation = undefined;
-        button.pointerUpAnimation = undefined;
+        button.pointerEnterAnimation =
+        button.pointerOutAnimation =
+        button.pointerDownAnimation =
+        button.pointerUpAnimation = () => {};
     }
 
     public static SetHoloBombButton(button: BABYLON.GUI.Button, row: number): void {
