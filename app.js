@@ -617,6 +617,31 @@ class MainMenu {
         button.background = "#1c1c1c";
         button.color = "white";
     }
+    static SetTitle(button) {
+        button.alpha = 1;
+        button.thickness = 0;
+        button.pointerEnterAnimation = undefined;
+        button.pointerOutAnimation = undefined;
+        button.pointerDownAnimation = undefined;
+        button.pointerUpAnimation = undefined;
+    }
+    static SetButton(button) {
+        button.thickness = 0;
+        MainMenu.DeactivateButton(button);
+        button.pointerEnterAnimation = () => {
+            MainMenu.ActivateButton(button);
+        };
+        button.pointerOutAnimation = () => {
+            MainMenu.DeactivateButton(button);
+        };
+    }
+    static SetStaticButton(button) {
+        button.thickness = 0;
+        button.pointerEnterAnimation = undefined;
+        button.pointerOutAnimation = undefined;
+        button.pointerDownAnimation = undefined;
+        button.pointerUpAnimation = undefined;
+    }
     static SetHoloBombButton(button, row) {
         MainMenu.SetHoloBombButtonDesign(button);
         button.width = 0.2;
@@ -656,14 +681,14 @@ class MainMenu2D extends MainMenu {
         title.height = "145px";
         title.top = 1024 - 145 - 815;
         title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        title.thickness = 0;
+        MainMenu.SetTitle(title);
         this._advancedTexture.addControl(title);
         let easyMode = BABYLON.GUI.Button.CreateImageOnlyButton("easy-mode", "./datas/ui-easy.png");
         easyMode.width = "512px";
         easyMode.height = "145px";
         easyMode.top = 1024 - 145 - 651;
         easyMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        easyMode.thickness = 0;
+        MainMenu.SetButton(easyMode);
         this._advancedTexture.addControl(easyMode);
         easyMode.onPointerUpObservable.add((p) => {
             Main.instance.StartEasyMode();
@@ -673,7 +698,7 @@ class MainMenu2D extends MainMenu {
         normalMode.height = "145px";
         normalMode.top = 1024 - 145 - 488;
         normalMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        normalMode.thickness = 0;
+        MainMenu.SetButton(normalMode);
         this._advancedTexture.addControl(normalMode);
         normalMode.onPointerUpObservable.add((p) => {
             Main.instance.StartNormalMode();
@@ -683,7 +708,7 @@ class MainMenu2D extends MainMenu {
         hardMode.height = "145px";
         hardMode.top = 1024 - 145 - 325;
         hardMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        hardMode.thickness = 0;
+        MainMenu.SetButton(hardMode);
         this._advancedTexture.addControl(hardMode);
         hardMode.onPointerUpObservable.add((p) => {
             Main.instance.StartHardMode();
@@ -694,16 +719,17 @@ class MainMenu2D extends MainMenu {
         screenMode.top = 1024 - 245 - 62;
         screenMode.left = -132;
         screenMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        screenMode.thickness = 0;
         this._advancedTexture.addControl(screenMode);
+        MainMenu.SetStaticButton(screenMode);
+        MainMenu.ActivateButton(screenMode);
         let vrMode = BABYLON.GUI.Button.CreateImageOnlyButton("vr-mode", "./datas/ui-vrmode.png");
         vrMode.width = "245px";
         vrMode.height = "245px";
         vrMode.top = 1024 - 245 - 62;
         vrMode.left = 132;
         vrMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        vrMode.thickness = 0;
         this._advancedTexture.addControl(vrMode);
+        MainMenu.SetButton(vrMode);
         MainMenu.DeactivateButton(vrMode);
         vrMode.onPointerUpObservable.add((p) => {
             Main.instance.switchToVR();

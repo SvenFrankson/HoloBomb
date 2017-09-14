@@ -11,7 +11,7 @@ class MainMenu2D extends MainMenu {
         title.height = "145px";
         title.top = 1024 - 145 - 815;
         title.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        title.thickness = 0;
+        MainMenu.SetTitle(title);
         this._advancedTexture.addControl(title);
 
         let easyMode: BABYLON.GUI.Button = BABYLON.GUI.Button.CreateImageOnlyButton("easy-mode", "./datas/ui-easy.png");
@@ -19,7 +19,7 @@ class MainMenu2D extends MainMenu {
         easyMode.height = "145px";
         easyMode.top = 1024 - 145 - 651;
         easyMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        easyMode.thickness = 0;
+        MainMenu.SetButton(easyMode);
         this._advancedTexture.addControl(easyMode);
         easyMode.onPointerUpObservable.add(
             (p: BABYLON.Vector2) => {
@@ -32,7 +32,7 @@ class MainMenu2D extends MainMenu {
         normalMode.height = "145px";
         normalMode.top = 1024 - 145 - 488;
         normalMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        normalMode.thickness = 0;
+        MainMenu.SetButton(normalMode);
         this._advancedTexture.addControl(normalMode);
         normalMode.onPointerUpObservable.add(
             (p: BABYLON.Vector2) => {
@@ -45,7 +45,7 @@ class MainMenu2D extends MainMenu {
         hardMode.height = "145px";
         hardMode.top = 1024 - 145 - 325;
         hardMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        hardMode.thickness = 0;
+        MainMenu.SetButton(hardMode);
         this._advancedTexture.addControl(hardMode);
         hardMode.onPointerUpObservable.add(
             (p: BABYLON.Vector2) => {
@@ -59,8 +59,9 @@ class MainMenu2D extends MainMenu {
         screenMode.top = 1024 - 245 - 62;
         screenMode.left = -132;
         screenMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        screenMode.thickness = 0;
         this._advancedTexture.addControl(screenMode);
+        MainMenu.SetStaticButton(screenMode);
+        MainMenu.ActivateButton(screenMode);
 
         let vrMode: BABYLON.GUI.Button = BABYLON.GUI.Button.CreateImageOnlyButton("vr-mode", "./datas/ui-vrmode.png");
         vrMode.width = "245px";
@@ -68,8 +69,8 @@ class MainMenu2D extends MainMenu {
         vrMode.top = 1024 - 245 - 62;
         vrMode.left = 132;
         vrMode.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        vrMode.thickness = 0;
         this._advancedTexture.addControl(vrMode);
+        MainMenu.SetButton(vrMode);
         MainMenu.DeactivateButton(vrMode);
         vrMode.onPointerUpObservable.add(
             (p: BABYLON.Vector2) => {

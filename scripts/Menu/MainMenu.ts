@@ -11,6 +11,34 @@ abstract class MainMenu {
         button.color = "white";
     }
 
+    public static SetTitle(button: BABYLON.GUI.Button): void {
+        button.alpha = 1;
+        button.thickness = 0;
+        button.pointerEnterAnimation = undefined;
+        button.pointerOutAnimation = undefined;
+        button.pointerDownAnimation = undefined;
+        button.pointerUpAnimation = undefined;
+    }
+
+    public static SetButton(button: BABYLON.GUI.Button): void {
+        button.thickness = 0;
+        MainMenu.DeactivateButton(button);
+        button.pointerEnterAnimation = () => {
+            MainMenu.ActivateButton(button);
+        }
+        button.pointerOutAnimation = () => {
+            MainMenu.DeactivateButton(button);
+        }
+    }
+
+    public static SetStaticButton(button: BABYLON.GUI.Button): void {
+        button.thickness = 0;
+        button.pointerEnterAnimation = undefined;
+        button.pointerOutAnimation = undefined;
+        button.pointerDownAnimation = undefined;
+        button.pointerUpAnimation = undefined;
+    }
+
     public static SetHoloBombButton(button: BABYLON.GUI.Button, row: number): void {
         MainMenu.SetHoloBombButtonDesign(button);
         button.width = 0.2;
